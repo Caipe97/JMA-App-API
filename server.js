@@ -4,6 +4,12 @@ const cors = require("cors");
 const db = require("./app/models");
 const app = express();
 
+let chai = require('chai');
+let chaiHttp = require('chai-http');
+const expect = require('chai').expect;
+
+chai.use(chaiHttp);
+
 var corsOptions = {
   origin: "http://localhost:8081"
 };
