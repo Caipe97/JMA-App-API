@@ -1,0 +1,36 @@
+{
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-node8": "^1.2.0",
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "config": "^3.3.6",
+    "cors": "^2.8.5",
+    "debug": "^4.3.2",
+    "express": "^4.17.1",
+    "mocha": "^9.1.0",
+    "nodemon": "^2.0.12",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.6.5",
+    "supertest": "^6.1.6"
+  },
+  "name": "proyintegral",
+  "version": "1.0.0",
+  "description": "Node.js REST API with Express, PostgreSQL and Sequelize",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "sequelize",
+    "postgresql",
+    "rest",
+    "api"
+  ],
+  "author": "Manuel",
+  "license": "ISC"
+}
