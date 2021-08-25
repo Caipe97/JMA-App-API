@@ -134,14 +134,15 @@ exports.deleteAll = (req, res) => {
 
 // Log in a user
 exports.login = (req, res) => {
+  console.log(req.body);
   if (!req.body.email || !req.body.password ) {
     res.status(400).send({
       message: "Login credentials incomplete"
     });
     return;
   }
-  const email = req.params.email;
-  const password = req.params.password;
+  const email = req.body.email;
+  const password = (req.body.password).toString();
 
   User.findOne({ where: { email: email, password: password } })
     .then(data => {
@@ -149,7 +150,7 @@ exports.login = (req, res) => {
     })
     .catch(err => {
       res.status(500).send({
-        message: "Error logging user with id=" + id
+        message: "Error logging user"
       });
     });
 };
