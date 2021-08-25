@@ -52,7 +52,7 @@ exports.findAll = (req, res) => {
 
 // Find a single name with an id
 exports.findOne = (req, res) => {
-    const id = req.params.id;
+    const id = req.body.id;
 
     User.findByPk(id)
       .then(data => {
@@ -67,7 +67,7 @@ exports.findOne = (req, res) => {
 
 // Update a User by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    const id = req.body.id;
 
     User.update(req.body, {
       where: { id: id }
@@ -92,7 +92,7 @@ exports.update = (req, res) => {
 
 // Delete a User with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    const id = req.body.id;
 
     User.destroy({
       where: { id: id }
