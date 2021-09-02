@@ -12,6 +12,16 @@ module.exports = (sequelize, Sequelize) => {
       password: {
         type: Sequelize.STRING
       },
+      birthday: {
+        type: Sequelize.DATE
+      },
+      weight: {
+        type: Sequelize.FLOAT
+      },
+      height: {
+        type: Sequelize.FLOAT
+      }
+
     });
   
     return User;

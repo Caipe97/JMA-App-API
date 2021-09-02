@@ -10,14 +10,24 @@ const expect = require('chai').expect;
 
 chai.use(chaiHttp);
 
+
+
 var corsOptions = {
   origin: "http://localhost:8081"
 };
 
+const dropDB = 1;
 
-db.sequelize.sync().then(() => {
-    console.log("Drop and re-sync db.");
-  });
+switch (dropDB){
+  case 1:
+    db.sequelize.sync({ force: true }).then(() => {
+      console.log("Drop and re-sync db.");
+    });
+  default:
+    db.sequelize.sync().then(() => {
+      console.log("sync db.");
+    });
+}
 
 //app.use(cors(corsOptions));
 app.use(cors());
