@@ -16,7 +16,7 @@ var corsOptions = {
   origin: "http://localhost:8081"
 };
 
-const dropDB = 1;
+const dropDB = 0;
 
 switch (dropDB){
   case 1:
@@ -42,6 +42,8 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.json({ message: "API JMA Group Ltd." });
 });
+
+module.exports = app;
 
 
 

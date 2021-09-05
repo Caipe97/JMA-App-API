@@ -5,12 +5,23 @@ const Op = db.Sequelize.Op;
 // Create and Save a new User
 exports.create = (req, res) => {
    // Validate request
-   if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password ) {
+  if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthDay || !req.body.birthMonth || !req.body.birthYear || !req.body.gender || !req.body.weight || !req.body.height) {
+
     res.status(400).send({
       message: "Content can not be empty!"
     });
-    return;
+    return
   }
+    //Check date format
+  try{
+    let aDate = new Date(req.body.birthMonth + " " + req.body.birthDay + ", " + req.body.birthYear);
+  }
+  catch (err){
+    res.status(400).send({
+      message: "Bad Date Format"
+    });
+    return;
+  };
 
   // Create a User
   const user = {
@@ -18,6 +29,10 @@ exports.create = (req, res) => {
     surname: req.body.surname,
     email: req.body.email,
     password: req.body.password,
+    birthday: new Date(req.body.birthMonth + " " + req.body.birthDay + ", " + req.body.birthYear),
+    gender: req.body.gender,
+    weight: req.body.weight,
+    height: req.body.height
   };
 
   // Save User in the database
