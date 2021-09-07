@@ -1,4 +1,4 @@
-module.exports = app => {
+
     const users = require("../controllers/users.controller.js");
   
     var router = require("express").Router();
@@ -12,7 +12,7 @@ module.exports = app => {
     // Obtener un solo usuario
     router.get("/:id", users.findOne);
   
-    // Actualizar un usuario por el id
+    // Actualizar un usuario
     router.put("/:id", users.update);
   
     // Eliminar un usuario por el id
@@ -23,7 +23,8 @@ module.exports = app => {
 
     //Login a un usuario
     router.post("/login", users.login);
+
+    module.exports = router;
   
-    app.use('/api/users', router);
-  };
-  
+    //app.use('/api/users', router);
+    

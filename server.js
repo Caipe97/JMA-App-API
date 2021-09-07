@@ -6,7 +6,7 @@ const app = express();
 
 let chai = require('chai');
 let chaiHttp = require('chai-http');
-const expect = require('chai').expect;
+//const expect = require('chai').expect;
 
 chai.use(chaiHttp);
 
@@ -43,11 +43,16 @@ app.get("/", (req, res) => {
   res.json({ message: "API JMA Group Ltd." });
 });
 
+
+app.use('/api/users', require('./app/routes/user.routes'));
+app.use('/api/foods', require('./app/routes/food.routes'));
+app.use('/api/records', require('./app/routes/record.routes'));
+
 module.exports = app;
 
-
-
-require("./app/routes/user.routes")(app);
+//require("./app/routes/user.routes")(app);
+//require("./app/routes/record.routes")(app);
+//require("./app/routes/food.routes")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

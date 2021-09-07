@@ -1,4 +1,4 @@
-module.exports = app => {
+
     const foods = require("../controllers/foods.controller.js");
   
     var router = require("express").Router();
@@ -21,6 +21,7 @@ module.exports = app => {
     // Eliminar TODAS las comidas
     router.delete("/", foods.deleteAll);
   
-    app.use('/api/foods', router);
-  };
+    module.exports = router;
+    //app.use('/api/foods', router);
+
   

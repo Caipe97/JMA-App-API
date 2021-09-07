@@ -21,7 +21,12 @@
   "description": "Node.js REST API with Express, PostgreSQL and Sequelize",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setTest": "node -e \"require('fs').writeFileSync('./deployType.txt', 'test')\"",
+    "setProd": "node -e \"require('fs').writeFileSync('./deployType.txt', 'prod')\"",
+    "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
+    "test": "npm run setTest && mocha",
+    "runLocal": "npm run setLocal && node server.js",
+    "start": "npm run setProd && node server.js"
   },
   "keywords": [
     "nodejs",
