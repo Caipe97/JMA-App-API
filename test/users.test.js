@@ -119,5 +119,10 @@ describe("api/users", () => {
 
         })
     });
+    after(function() { 
+        console.log('All tests ran'); 
+        db.sequelize.close();
+        console.log(User);
+    });
 
 })
