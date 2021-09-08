@@ -29,7 +29,7 @@ exports.create = (req, res) => {
     surname: req.body.surname,
     email: req.body.email,
     password: req.body.password,
-    birthday: new Date(req.body.birthMonth + " " + req.body.birthDay + ", " + req.body.birthYear),
+    birthday: new Date(req.body.birthday),
     gender: req.body.gender,
     weight: req.body.weight,
     height: req.body.height
