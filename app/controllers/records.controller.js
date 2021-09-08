@@ -80,7 +80,7 @@ exports.findOne = (req, res) => {
 
 // Update a Record by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
+    const id = req.body.id;
 
     Record.update(req.body, {
       where: { id: id }
@@ -105,7 +105,8 @@ exports.update = (req, res) => {
 
 // Delete a Record with the specified id in the request
 exports.delete = (req, res) => {
-    const id = req.params.id;
+    console.log(req);
+    const id = req.body.id;
 
     Record.destroy({
       where: { id: id }

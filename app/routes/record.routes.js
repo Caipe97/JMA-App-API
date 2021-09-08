@@ -16,7 +16,7 @@
     router.put("/:id", records.update);
   
     // Eliminar un record por el id
-    router.delete("/:id", records.delete);
+    router.delete("/", records.delete);
 
 
     module.exports = router;
