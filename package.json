@@ -24,7 +24,7 @@
     "setTest": "node -e \"require('fs').writeFileSync('./deployType.txt', 'test')\"",
     "setProd": "node -e \"require('fs').writeFileSync('./deployType.txt', 'prod')\"",
     "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
-    "test": "npm run setTest && mocha --timeout 15000",
+    "test": "npm run setTest && mocha --timeout 15000 --exit",
     "runLocal": "npm run setLocal && node server.js",
     "start": "npm run setProd && node server.js"
   },
