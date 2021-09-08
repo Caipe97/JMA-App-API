@@ -14,6 +14,8 @@
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
+    "sequelize-mock": "^0.10.2",
+    "sqlite3": "^5.0.2",
     "supertest": "^6.1.6"
   },
   "name": "proyintegral",
@@ -24,7 +26,7 @@
     "setTest": "node -e \"require('fs').writeFileSync('./deployType.txt', 'test')\"",
     "setProd": "node -e \"require('fs').writeFileSync('./deployType.txt', 'prod')\"",
     "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
-    "test": "npm run setTest && mocha",
+    "test": "npm run setTest && mocha --timeout 15000 --exit",
     "runLocal": "npm run setLocal && node server.js",
     "start": "npm run setProd && node server.js"
   },
