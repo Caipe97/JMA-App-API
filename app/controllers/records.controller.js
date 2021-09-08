@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Record
 exports.create = (req, res) => {
    // Validate request
-   console.log(req.body.foodName);
+   console.log(req.body);
    if (!req.body.foodName || !req.body.gramAmount || !req.body.dateEaten || !req.body.userID ) {
     
     res.status(400).send({
