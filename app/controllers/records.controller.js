@@ -47,8 +47,9 @@ exports.create = (req, res) => {
 
 // Retrieve all Records from the database. CAMBIAR PARA HACER UN RETRIEVE SEGUN UN USERID
 exports.findAll = (req, res) => {
-    const foodName = req.query.foodName;
-    var condition = foodName ? { name: { [Op.iLike]: `%${foodName}%` } } : null;
+    const userID = req.query.userID;
+    //console.log(req);
+    var condition = {userID: userID};
   
     Record.findAll({ where: condition })
       .then(data => {
