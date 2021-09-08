@@ -31,10 +31,10 @@ switch(deployType){
     break;
 
   default: //default es el modo test
-    host = "localhost";
-    user = "jmaadmin";
-    password = "hola1234";
-    db = "testDB";
+    host = "ec2-34-196-238-94.compute-1.amazonaws.com";
+    user = "lubkbmpwbxxakv";
+    password = "be26288ddd5db110d51f01fb07cee35d4150cd26964effdde53717b4ccc84938";
+    db = "db713h9rm2p329";
     break;
 }
 
