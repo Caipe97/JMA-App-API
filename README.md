@@ -1,3 +1,4 @@
 # JMA-App-API
 
-To run, use npm run test
+to run prod, use npm start
+To run tests, use npm run test
