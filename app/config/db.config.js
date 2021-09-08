@@ -1,5 +1,7 @@
+
 var fs = require('fs');
 var deployType;
+
 try{
   deployType = fs.readFileSync('./deployType.txt', 'utf8');
   console.log("Data: ", deployType.toString());
@@ -13,6 +15,7 @@ var host;
 var user;
 var password;
 var db;
+var dialect;
 
 switch(deployType){
 
@@ -21,6 +24,7 @@ switch(deployType){
     user = "jmaadmin";
     password = "hola1234";
     db = "productionDB";
+    dialect = "postgres";
     break;
 
   case "prod":
@@ -28,13 +32,15 @@ switch(deployType){
     user = "felwwwxailwhga";
     password = "e2c3d193ad75dc375be583af8e59468633feef75e6dae94515eb8c39f1b705d5";
     db = "d8k6n6tld23bad";
+    dialect = "postgres";
     break;
 
   default: //default es el modo test
-    host = "ec2-34-196-238-94.compute-1.amazonaws.com";
-    user = "lubkbmpwbxxakv";
-    password = "be26288ddd5db110d51f01fb07cee35d4150cd26964effdde53717b4ccc84938";
-    db = "db713h9rm2p329";
+    host = "0.0.0.0";
+    user = "test";
+    password = "test";
+    db = "testdb_in_sqlite";
+    dialect = "sqlite";
     break;
 }
 
@@ -44,7 +50,7 @@ switch(deployType){
     USER: user,
     PASSWORD: password,
     DB: db,
-    dialect: "postgres",
+    dialect: dialect,
     dialectOptions: {
       ssl: {
         require: true,

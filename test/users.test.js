@@ -11,7 +11,7 @@ const app = require('../server');
 describe("api/users", () => {
     beforeEach( async ()=> {
         //Elimino todo de la base de datos.
-        await db.sequelize.sync({ force: true }).then(() => {
+       await db.sequelize.sync({ force: true }).then(() => {
             console.log("Drop and re-sync db.");
           });{ force: true }
     });
@@ -110,7 +110,6 @@ describe("api/users", () => {
             
             
             //console.log(resPost);
-
 
             //console.log(resGet);
             expect(resPost.status).to.equal(200);

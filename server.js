@@ -10,6 +10,18 @@ let chaiHttp = require('chai-http');
 
 chai.use(chaiHttp);
 
+var fs = require('fs');
+var deployType = 'test'; //si falla el leer deployType.txt, ese es el valor por defecto
+
+try{
+  deployType = fs.readFileSync('./deployType.txt', 'utf8');
+  console.log("Data: ", deployType.toString());
+  deployType = deployType.toString();
+}
+catch(e){
+  console.log('WARNING: ', e.stack);
+}
+
 
 
 var corsOptions = {
@@ -20,13 +32,14 @@ const dropDB = 1;
 
 switch (dropDB){
   case 1:
-    db.sequelize.sync({ force: true }).then(() => {
-      console.log("Drop and re-sync db.");
-    });
+      db.sequelize.sync({ force: true }).then(() => {
+        console.log("Drop and re-sync db.");
+      });
   default:
-    db.sequelize.sync().then(() => {
-      console.log("sync db.");
-    });
+
+      db.sequelize.sync().then(() => {
+        console.log("sync db.");
+      });
 }
 
 //app.use(cors(corsOptions));
@@ -58,3 +71,5 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+
