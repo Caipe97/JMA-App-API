@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new User
 exports.create = (req, res) => {
    // Validate request
-  if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.birthDay || !req.body.birthMonth || !req.body.birthYear || !req.body.gender || !req.body.weight || !req.body.height) {
+  if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.gender || !req.body.weight || !req.body.height || !req.body.birthday) {
 
     res.status(400).send({
       message: "Content can not be empty!"
@@ -14,7 +14,7 @@ exports.create = (req, res) => {
   }
     //Check date format
   try{
-    let aDate = new Date(req.body.birthMonth + " " + req.body.birthDay + ", " + req.body.birthYear);
+    let aDate = new Date(req.body.birthday);
   }
   catch (err){
     res.status(400).send({

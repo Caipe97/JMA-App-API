@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 exports.create = (req, res) => {
    // Validate request
    console.log(req.body.foodName);
-   if (!req.body.foodName || !req.body.gramAmount || !req.body.monthEaten || !req.body.dayEaten || !req.body.yearEaten || !req.body.userID ) {
+   if (!req.body.foodName || !req.body.gramAmount || !req.body.dateEaten || !req.body.userID ) {
     
     res.status(400).send({
       message: "Content can not be empty!"
@@ -15,7 +15,7 @@ exports.create = (req, res) => {
   }
     //Check date format
     try{
-      let aDate = new Date(req.body.monthEaten + " " + req.body.dayEaten + ", " + req.body.yearEaten);
+      let aDate = new Date(req.body.dateEaten);
     }
     catch (err){
       res.status(400).send({

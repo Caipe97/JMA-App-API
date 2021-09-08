@@ -41,9 +41,7 @@ describe("api/users", () => {
                     surname: "testuser",
                     email: "test@gmail.com",
                     password: "1234",
-                    birthDay: 8,
-                    birthMonth: "Jan",
-                    birthYear: 1997,
+                    birthday: '1997-01-08',
                     gender: "male",
                     weight: 75,
                     height: 1.75
