@@ -29,7 +29,7 @@ exports.create = (req, res) => {
     foodName: req.body.foodName,
     gramAmount: parseInt(req.body.gramAmount),
     userID: parseInt(req.body.userID),
-    dateEaten: new Date(req.body.monthEaten + " " + req.body.dayEaten + ", " + req.body.yearEaten),
+    dateEaten: new Date(req.body.dateEaten),
   };
 
   // Save Record in the database
