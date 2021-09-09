@@ -414,7 +414,7 @@ exports.create = (req, res) =&gt; {
    // Validate request
   <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body.name || !req.body.surname || !req.body.email || !req.body.password || !req.body.gender || !req.body.weight || !req.body.height || !req.body.birthday) {
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    res.status(400).send({</span>
+<span class="cstat-no" title="statement not covered" >    res.s</span>tatus(400).send({
       message: "Content can not be empty!"
     });
 <span class="cstat-no" title="statement not covered" >    return</span>
@@ -424,7 +424,7 @@ exports.create = (req, res) =&gt; {
     let aDate = new Date(req.body.birthday);
   }
   catch (err){
-<span class="cstat-no" title="statement not covered" >    res.status(400).send({</span>
+<span class="cstat-no" title="statement not covered" >    res.s</span>tatus(400).send({
       message: "Bad Date Format"
     });
 <span class="cstat-no" title="statement not covered" >    return;</span>
@@ -447,8 +447,8 @@ exports.create = (req, res) =&gt; {
     .then(data =&gt; {
       res.send(data);
     })
-    .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >      res.status(500).send({</span>
+    .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.s</span>tatus(500).send({
         message:
           err.message || "Error while creating new User."
       });
@@ -458,14 +458,14 @@ exports.create = (req, res) =&gt; {
 // Retrieve all Users from the database.
 exports.findAll = (req, res) =&gt; {
     const name = req.query.name;
-    var condition = name ? <span class="branch-0 cbranch-no" title="branch not covered" >{ name: { [Op.iLike]: `%${name}%` } } </span>: null;
+    var condition = name ? <span class="branch-0 cbranch-no" title="branch not covered" >{ n</span>ame: { [Op.iLike]: `%${name}%` } } : null;
   
     User.findAll({ where: condition })
       .then(data =&gt; {
         res.send(data);
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message:
             err.message || "Error while retrieving users."
         });
@@ -476,12 +476,12 @@ exports.findAll = (req, res) =&gt; {
 exports.findOne = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    User.findByPk(id)</span>
-      .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
+<span class="cstat-no" title="statement not covered" >    User.f</span>indByPk(id)
+      .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>end(data);
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Error retrieving user with id=" + id
         });
       });
@@ -502,13 +502,13 @@ exports.update = (req, res) =&gt; {
             message: "User was updated successfully."
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Error updating User with id=" + id
         });
       });
@@ -516,25 +516,25 @@ exports.update = (req, res) =&gt; {
 &nbsp;
 // Delete a User with the specified id in the request
 exports.delete = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >  console.log(req);</span>
+<span class="cstat-no" title="statement not covered" >  console.l</span>og(req);
     const id = <span class="cstat-no" title="statement not covered" >req.params.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    User.destroy({</span>
+<span class="cstat-no" title="statement not covered" >    User.d</span>estroy({
       where: { id: id }
     })
-      .then(<span class="fstat-no" title="function not covered" >nu</span>m =&gt; {
+      .then(<span class="fstat-no" title="function not covered" >num =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        if (num == 1) {</span>
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: "User was deleted successfully!"
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: `Cannot delete User with id=${id}. Maybe User was not found!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Could not delete User with id=" + id
         });
       });
@@ -542,15 +542,15 @@ exports.delete = <span class="fstat-no" title="function not covered" >(r</span>e
 &nbsp;
 // Delete all Tutorials from the database.
 exports.deleteAll = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >    User.destroy({</span>
+<span class="cstat-no" title="statement not covered" >    User.d</span>estroy({
         where: {},
         truncate: false
       })
-        .then(<span class="fstat-no" title="function not covered" >nu</span>ms =&gt; {
-<span class="cstat-no" title="statement not covered" >          res.send({ message: `${nums} Tutorials were deleted successfully!` });</span>
+        .then(<span class="fstat-no" title="function not covered" >nums =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({ message: `${nums} Tutorials were deleted successfully!` });
         })
-        .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >          res.status(500).send({</span>
+        .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>tatus(500).send({
             message:
               err.message || "Some error occurred while removing all tutorials."
           });
@@ -561,7 +561,7 @@ exports.deleteAll = <span class="fstat-no" title="function not covered" >(r</spa
 exports.login = (req, res) =&gt; {
   console.log(req.body);
   <span class="missing-if-branch" title="if path not taken" >I</span>if (!req.body.email || !req.body.password ) {
-<span class="cstat-no" title="statement not covered" >    res.status(400).send({</span>
+<span class="cstat-no" title="statement not covered" >    res.s</span>tatus(400).send({
       message: "Login credentials incomplete"
     });
 <span class="cstat-no" title="statement not covered" >    return;</span>
@@ -573,8 +573,8 @@ exports.login = (req, res) =&gt; {
     .then(data =&gt; {
       res.send(data); //envio el perfil del usuario...
     })
-    .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >      res.status(500).send({</span>
+    .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.s</span>tatus(500).send({
         message: "Error logging user"
       });
     });
@@ -586,7 +586,7 @@ exports.login = (req, res) =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Sep 09 2021 13:55:10 GMT-0700 (Pacific Daylight Time)
+                at Thu Sep 09 2021 14:06:25 GMT-0700 (Pacific Daylight Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>

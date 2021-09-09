@@ -327,7 +327,7 @@ const Op = db.Sequelize.Op;
 exports.create = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
    // Validate request
 <span class="cstat-no" title="statement not covered" >   if (!req.body.name ) {</span>
-<span class="cstat-no" title="statement not covered" >    res.status(400).send({</span>
+<span class="cstat-no" title="statement not covered" >    res.s</span>tatus(400).send({
       message: "Content can not be empty!"
     });
 <span class="cstat-no" title="statement not covered" >    return;</span>
@@ -339,12 +339,12 @@ exports.create = <span class="fstat-no" title="function not covered" >(r</span>e
   };
 &nbsp;
   // Save Food in the database
-<span class="cstat-no" title="statement not covered" >  Food.create(food)</span>
-    .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
-<span class="cstat-no" title="statement not covered" >      res.send(data);</span>
+<span class="cstat-no" title="statement not covered" >  Food.c</span>reate(food)
+    .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.s</span>end(data);
     })
-    .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >      res.status(500).send({</span>
+    .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.s</span>tatus(500).send({
         message:
           err.message || "Error while creating new Food."
       });
@@ -356,12 +356,12 @@ exports.findAll = <span class="fstat-no" title="function not covered" >(r</span>
     const name = <span class="cstat-no" title="statement not covered" >req.query.name;</span>
     var condition = <span class="cstat-no" title="statement not covered" >name ? { name: { [Op.iLike]: `%${name}%` } } : null;</span>
   
-<span class="cstat-no" title="statement not covered" >    Food.findAll({ where: condition })</span>
-      .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
+<span class="cstat-no" title="statement not covered" >    Food.f</span>indAll({ where: condition })
+      .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>end(data);
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message:
             err.message || "Error while retrieving foods."
         });
@@ -372,12 +372,12 @@ exports.findAll = <span class="fstat-no" title="function not covered" >(r</span>
 exports.findOne = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Food.findByPk(id)</span>
-      .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
+<span class="cstat-no" title="statement not covered" >    Food.f</span>indByPk(id)
+      .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>end(data);
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Error retrieving food with id=" + id
         });
       });
@@ -387,22 +387,22 @@ exports.findOne = <span class="fstat-no" title="function not covered" >(r</span>
 exports.update = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Food.update(req.body, {</span>
+<span class="cstat-no" title="statement not covered" >    Food.u</span>pdate(req.body, {
       where: { id: id }
     })
-      .then(<span class="fstat-no" title="function not covered" >nu</span>m =&gt; {
+      .then(<span class="fstat-no" title="function not covered" >num =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        if (num == 1) {</span>
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: "Food was updated successfully."
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: `Cannot update Food with id=${id}. Maybe Food was not found or req.body is empty!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Error updating Food with id=" + id
         });
       });
@@ -412,22 +412,22 @@ exports.update = <span class="fstat-no" title="function not covered" >(r</span>e
 exports.delete = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Food.destroy({</span>
+<span class="cstat-no" title="statement not covered" >    Food.d</span>estroy({
       where: { id: id }
     })
-      .then(<span class="fstat-no" title="function not covered" >nu</span>m =&gt; {
+      .then(<span class="fstat-no" title="function not covered" >num =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >        if (num == 1) {</span>
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: "Food was deleted successfully!"
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          res.send({</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({
             message: `Cannot delete Food with id=${id}. Maybe Food was not found!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
+      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
           message: "Could not delete User with id=" + id
         });
       });
@@ -435,15 +435,15 @@ exports.delete = <span class="fstat-no" title="function not covered" >(r</span>e
 &nbsp;
 // Delete all Foods from the database.
 exports.deleteAll = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >    Food.destroy({</span>
+<span class="cstat-no" title="statement not covered" >    Food.d</span>estroy({
         where: {},
         truncate: false
       })
-        .then(<span class="fstat-no" title="function not covered" >nu</span>ms =&gt; {
-<span class="cstat-no" title="statement not covered" >          res.send({ message: `${nums} Foods were deleted successfully!` });</span>
+        .then(<span class="fstat-no" title="function not covered" >nums =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>end({ message: `${nums} Foods were deleted successfully!` });
         })
-        .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
-<span class="cstat-no" title="statement not covered" >          res.status(500).send({</span>
+        .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          res.s</span>tatus(500).send({
             message:
               err.message || "Some error occurred while removing all Foods."
           });
@@ -457,7 +457,7 @@ exports.deleteAll = <span class="fstat-no" title="function not covered" >(r</spa
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Sep 09 2021 13:55:10 GMT-0700 (Pacific Daylight Time)
+                at Thu Sep 09 2021 14:06:25 GMT-0700 (Pacific Daylight Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>
