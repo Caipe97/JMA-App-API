@@ -11,6 +11,7 @@
     "debug": "^4.3.2",
     "express": "^4.17.1",
     "mocha": "^9.1.1",
+    "mocha-lcov-reporter": "^1.3.0",
     "nodemon": "^2.0.12",
     "nyc": "^15.1.0",
     "pg": "^8.7.1",
@@ -28,7 +29,7 @@
     "setTest": "node -e \"require('fs').writeFileSync('./deployType.txt', 'test')\"",
     "setProd": "node -e \"require('fs').writeFileSync('./deployType.txt', 'prod')\"",
     "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
-    "test": "npm run setTest && nyc mocha --timeout 15000 --exit",
+    "test": "npm run setTest && nyc --reporter=html  --reporter=text mocha --timeout 15000 --exit",
     "runLocal": "npm run setLocal && node server.js",
     "start": "npm run setProd && node server.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
