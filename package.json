@@ -29,10 +29,9 @@
     "setTest": "node -e \"require('fs').writeFileSync('./deployType.txt', 'test')\"",
     "setProd": "node -e \"require('fs').writeFileSync('./deployType.txt', 'prod')\"",
     "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
-    "test": "npm run setTest && nyc --reporter=html  --reporter=text mocha --timeout 15000 --exit --require babel-register",
+    "test": "npm run setTest && nyc mocha --timeout 15000 --exit ",
     "runLocal": "npm run setLocal && node server.js",
-    "start": "npm run setProd && node server.js",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "start": "npm run setProd && node server.js"
   },
   "keywords": [
     "nodejs",
