@@ -114,9 +114,11 @@ exports.delete = (req, res) => {
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "Record was deleted successfully!"
+            message: "Record was deleted successfully!",
+            deletedRecordID: id,
           });
         } else {
+          console.log(num);
           res.send({
             message: `Cannot delete Record with id=${id}. Maybe Record was not found!`
           });

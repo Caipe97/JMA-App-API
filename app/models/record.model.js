@@ -1,5 +1,5 @@
 module.exports = (sequelize, Sequelize) => {
-    const Record = sequelize.define("food", {
+    const Record = sequelize.define("record", {
       foodName: {
         type: Sequelize.STRING
       },

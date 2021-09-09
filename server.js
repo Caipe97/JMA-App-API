@@ -28,7 +28,7 @@ var corsOptions = {
   origin: "http://localhost:8081"
 };
 
-const dropDB = 0;
+const dropDB = 1;
 
 switch (dropDB){
   case 1:
