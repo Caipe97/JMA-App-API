@@ -330,20 +330,20 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Record
 exports.create = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
    // Validate request
-<span class="cstat-no" title="statement not covered" >   console.l</span>og(req.body);
+<span class="cstat-no" title="statement not covered" >   console.log(req.body);</span>
 <span class="cstat-no" title="statement not covered" >   if (!req.body.foodName || !req.body.gramAmount || !req.body.dateEaten || !req.body.userID ) {</span>
     
-<span class="cstat-no" title="statement not covered" >    res.s</span>tatus(400).send({
+<span class="cstat-no" title="statement not covered" >    res.status(400).send({</span>
       message: "Content can not be empty!"
     });
 <span class="cstat-no" title="statement not covered" >    return;</span>
   }
     //Check date format
 <span class="cstat-no" title="statement not covered" >    try{</span>
-      let aDate = <span class="cstat-no" title="statement not covered" >new D</span>ate(req.body.dateEaten);
+      let aDate = <span class="cstat-no" title="statement not covered" >new Date(req.body.dateEaten);</span>
     }
     catch (err){
-<span class="cstat-no" title="statement not covered" >      res.s</span>tatus(400).send({
+<span class="cstat-no" title="statement not covered" >      res.status(400).send({</span>
         message: "Bad Date Format"
       });
 <span class="cstat-no" title="statement not covered" >      return;</span>
@@ -358,12 +358,12 @@ exports.create = <span class="fstat-no" title="function not covered" >(r</span>e
   };
 &nbsp;
   // Save Record in the database
-<span class="cstat-no" title="statement not covered" >  Record.c</span>reate(record)
-    .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      res.s</span>end(data);
+<span class="cstat-no" title="statement not covered" >  Record.create(record)</span>
+    .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
+<span class="cstat-no" title="statement not covered" >      res.send(data);</span>
     })
-    .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      res.s</span>tatus(500).send({
+    .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
+<span class="cstat-no" title="statement not covered" >      res.status(500).send({</span>
         message:
           err.message || "Error while creating new Record."
       });
@@ -374,14 +374,14 @@ exports.create = <span class="fstat-no" title="function not covered" >(r</span>e
 exports.findAll = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const userID = <span class="cstat-no" title="statement not covered" >req.query.userID;</span>
     //console.log(req);
-    var condition = <span class="cstat-no" title="statement not covered" >{u</span>serID: userID};
+    var condition = <span class="cstat-no" title="statement not covered" >{userID: userID};</span>
   
-<span class="cstat-no" title="statement not covered" >    Record.f</span>indAll({ where: condition })
-      .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>end(data);
+<span class="cstat-no" title="statement not covered" >    Record.findAll({ where: condition })</span>
+      .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
       })
-      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
+      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
           message:
             err.message || "Error while retrieving Records."
         });
@@ -392,12 +392,12 @@ exports.findAll = <span class="fstat-no" title="function not covered" >(r</span>
 exports.findOne = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.params.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Record.f</span>indByPk(id)
-      .then(<span class="fstat-no" title="function not covered" >data =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>end(data);
+<span class="cstat-no" title="statement not covered" >    Record.findByPk(id)</span>
+      .then(<span class="fstat-no" title="function not covered" >da</span>ta =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.send(data);</span>
       })
-      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
+      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
           message: "Error retrieving Record with id=" + id
         });
       });
@@ -407,22 +407,22 @@ exports.findOne = <span class="fstat-no" title="function not covered" >(r</span>
 exports.update = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Record.u</span>pdate(req.body, {
+<span class="cstat-no" title="statement not covered" >    Record.update(req.body, {</span>
       where: { id: id }
     })
-      .then(<span class="fstat-no" title="function not covered" >num =&gt; {</span>
+      .then(<span class="fstat-no" title="function not covered" >nu</span>m =&gt; {
 <span class="cstat-no" title="statement not covered" >        if (num == 1) {</span>
-<span class="cstat-no" title="statement not covered" >          res.s</span>end({
+<span class="cstat-no" title="statement not covered" >          res.send({</span>
             message: "Record was updated successfully."
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          res.s</span>end({
+<span class="cstat-no" title="statement not covered" >          res.send({</span>
             message: `Cannot update Record with id=${id}. Maybe Record was not found or req.body is empty!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
+      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
           message: "Error updating Record with id=" + id
         });
       });
@@ -430,27 +430,27 @@ exports.update = <span class="fstat-no" title="function not covered" >(r</span>e
 &nbsp;
 // Delete a Record with the specified id in the request
 exports.delete = <span class="fstat-no" title="function not covered" >(r</span>eq, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >    console.l</span>og(req);
+<span class="cstat-no" title="statement not covered" >    console.log(req);</span>
     const id = <span class="cstat-no" title="statement not covered" >req.body.id;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    Record.d</span>estroy({
+<span class="cstat-no" title="statement not covered" >    Record.destroy({</span>
       where: { id: id }
     })
-      .then(<span class="fstat-no" title="function not covered" >num =&gt; {</span>
+      .then(<span class="fstat-no" title="function not covered" >nu</span>m =&gt; {
 <span class="cstat-no" title="statement not covered" >        if (num == 1) {</span>
-<span class="cstat-no" title="statement not covered" >          res.s</span>end({
+<span class="cstat-no" title="statement not covered" >          res.send({</span>
             message: "Record was deleted successfully!",
             deletedRecordID: id,
           });
         } else {
-<span class="cstat-no" title="statement not covered" >          console.l</span>og(num);
-<span class="cstat-no" title="statement not covered" >          res.s</span>end({
+<span class="cstat-no" title="statement not covered" >          console.log(num);</span>
+<span class="cstat-no" title="statement not covered" >          res.send({</span>
             message: `Cannot delete Record with id=${id}. Maybe Record was not found!`
           });
         }
       })
-      .catch(<span class="fstat-no" title="function not covered" >err =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        res.s</span>tatus(500).send({
+      .catch(<span class="fstat-no" title="function not covered" >er</span>r =&gt; {
+<span class="cstat-no" title="statement not covered" >        res.status(500).send({</span>
           message: "Could not delete User with id=" + id
         });
       });
@@ -463,7 +463,7 @@ exports.delete = <span class="fstat-no" title="function not covered" >(r</span>e
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Thu Sep 09 2021 14:06:25 GMT-0700 (Pacific Daylight Time)
+                at Sat Sep 11 2021 09:50:20 GMT-0700 (Pacific Daylight Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>

@@ -31,7 +31,8 @@
     "setLocal": "node -e \"require('fs').writeFileSync('./deployType.txt', 'local')\"",
     "test": "npm run setTest && nyc mocha --timeout 15000 --exit ",
     "runLocal": "npm run setLocal && node server.js",
-    "start": "npm run setProd && node server.js"
+    "start": "npm run setProd && node server.js",
+    "coverage": "npm run setTest && nyc report --reporter=lcov | coveralls"
   },
   "keywords": [
     "nodejs",
