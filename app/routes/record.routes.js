@@ -15,7 +15,7 @@
     // Actualizar un record por el id
     router.put("/:id", records.update);
   
-    // Eliminar un record por el id
+    // Eliminar un record por el id, pasado en el body
     router.delete("/", records.delete);
 
 

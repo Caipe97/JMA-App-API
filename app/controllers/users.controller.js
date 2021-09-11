@@ -13,15 +13,13 @@ exports.create = (req, res) => {
     return
   }
     //Check date format
-  try{
+
     let aDate = new Date(req.body.birthday);
-  }
-  catch (err){
-    res.status(400).send({
-      message: "Bad Date Format"
-    });
-    return;
-  };
+    if(isNaN(aDate.getTime())){
+      res.status(400).send({
+        message: "Bad Date Format"
+      });
+    }
 
   // Create a User
   const user = {
@@ -67,10 +65,15 @@ exports.findAll = (req, res) => {
 
 // Find a single name with an id
 exports.findOne = (req, res) => {
-    const id = req.body.id;
+    const id = req.params.id;
 
     User.findByPk(id)
       .then(data => {
+        if(!data){
+          res.status(404).send(
+            {message: "Not Found"}
+          )
+        }
         res.send(data);
       })
       .catch(err => {
@@ -95,7 +98,7 @@ exports.update = (req, res) => {
             message: "User was updated successfully."
           });
         } else {
-          res.send({
+          res.status(404).send({
             message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
           });
         }
@@ -121,7 +124,7 @@ exports.delete = (req, res) => {
             message: "User was deleted successfully!"
           });
         } else {
-          res.send({
+          res.status(404).send({
             message: `Cannot delete User with id=${id}. Maybe User was not found!`
           });
         }
@@ -133,22 +136,6 @@ exports.delete = (req, res) => {
       });
 };
 
-// Delete all Tutorials from the database.
-exports.deleteAll = (req, res) => {
-    User.destroy({
-        where: {},
-        truncate: false
-      })
-        .then(nums => {
-          res.send({ message: `${nums} Tutorials were deleted successfully!` });
-        })
-        .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while removing all tutorials."
-          });
-        });
-};
 
 // Log in a user
 exports.login = (req, res) => {

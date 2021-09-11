@@ -17,9 +17,6 @@
   
     // Eliminar un usuario por el id
     router.delete("/:id", users.delete);
-  
-    // Eliminar TODOS los usuarios
-    router.delete("/", users.deleteAll);
 
     //Login a un usuario
     router.post("/login", users.login);
