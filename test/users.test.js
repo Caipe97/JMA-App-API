@@ -1,6 +1,6 @@
 const db = require('../app/models');
 const User = db.users;
-const Record = db.records;
+const Meal = db.meals;
 
 const request = require('supertest');
 const expect = require('chai').expect;
@@ -33,7 +33,7 @@ describe("api/users", () => {
         });
     });
 
-    describe("GET /:id", () => {
+    describe("GET /:userId", () => {
         it("should return one user", async () => {
             //setup
             const testUsers = [
@@ -43,7 +43,7 @@ describe("api/users", () => {
             ];
             await User.bulkCreate(testUsers);
             
-            const res = await request(app).get("/api/users/1")
+            const res = await request(app).get("/api/users?userId=1")
             expect(res.status).to.equal(200);
             expect(res.body.email).to.equal("manu.crespo97@gmail.com");
         })
@@ -73,6 +73,7 @@ describe("api/users", () => {
 
         });
         it("should give an error if a parameter is missing", async () => {
+
             //aca falta email, por ejemplo
             const testUser = 
                 { 
@@ -144,13 +145,13 @@ describe("api/users", () => {
             var resPost = await (request(app).post("/api/users/login").send(loginCreds).set('Accept', 'application/json'));
 
             //extraigo el id del user
-            const idUser = (resPost.body).id;
-            console.log("id del usuario" + idUser);             
-            resPost = await (request(app).put("/api/users/" + idUser).send(updateCreds).set('Accept', 'application/json'));
+            const idUser = (resPost.body).userId;
+            //console.log("id del usuario" + idUser);             
+            resPost = await (request(app).put("/api/users?userId=" + idUser).send(updateCreds).set('Accept', 'application/json'));
             
             expect(resPost.status).to.equal(200);
 
-            const resGet = await request(app).get("/api/users/" + idUser);
+            const resGet = await request(app).get("/api/users?userId=" + idUser);
 
             expect(resGet.status).to.equal(200);
             expect(resGet.body.password).to.equal("asd");
@@ -179,14 +180,53 @@ describe("api/users", () => {
                 password: "asd"
             }
           
-            resPost = await (request(app).put("/api/users/7").send(updateCreds).set('Accept', 'application/json'));
+            resPost = await (request(app).put("/api/users?userId=7").send(updateCreds).set('Accept', 'application/json'));
             
-            expect(resPost.status).to.equal(404);
+            expect(resPost.status).to.equal(400);
+
+        });
+    });
+    describe("POST /login", () => {
+        it("should login a user", async () => {
+            //setup
+            const testUsers = 
+                { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            
+                await User.create(testUsers);
+
+            const loginCreds = {
+                email: "manu.crespo97@gmail.com",
+                password: "1234"
+            }
+
+            var resPost = await (request(app).post("/api/users/login").send(loginCreds).set('Accept', 'application/json'));
+
+            expect(resPost.status).to.equal(200);
+            
+
+        });
+
+        it("should error out on logging in a non-existent user", async () => {
+            //setup
+            const testUsers = 
+                { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            
+            await User.create(testUsers);
+
+            const loginCreds = {
+                email: "manu.crespo97@gmail.com",
+                password: "123"
+            }
+
+            var resPost = await (request(app).post("/api/users/login").send(loginCreds).set('Accept', 'application/json'));
+
+            expect(resPost.status).to.equal(400);
+            
 
         });
     });
 
-    describe("DELETE /:id", () => {
+    describe("DELETE /:userId", () => {
         it("should delete a user", async () => {
             //setup
             const testUsers = 
@@ -195,12 +235,13 @@ describe("api/users", () => {
             
             //user deletion
 
-            let res = await request(app).delete("/api/users/1");
+            let res = await request(app).delete("/api/users?userId=1");
             expect(res.status).to.equal(200);
 
-            let resGet = await request(app).get("/api/users/1")
-            expect(resGet.status).to.equal(404);
+            let resGet = await request(app).get("/api/users?userId=1")
+            expect(resGet.status).to.equal(400);
         });
+
         it("should error out on deleting a non-existent user", async () => {
             //setup
             const testUsers = 
@@ -209,16 +250,14 @@ describe("api/users", () => {
             
             //user deletion
 
-            let resGet = await request(app).delete("/api/users/45")
-            expect(resGet.status).to.equal(404);
+            let res = await request(app).delete("/api/users?userId=45")
+            expect(res.status).to.equal(400);
         });
     });
-    
-
 
     after(function() { 
         console.log('All tests ran'); 
-        db.sequelize.close();
+        //db.sequelize.close();
         console.log(User);
     });
 

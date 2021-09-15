@@ -59,12 +59,12 @@ app.get("/", (req, res) => {
 
 app.use('/api/users', require('./app/routes/user.routes'));
 app.use('/api/foods', require('./app/routes/food.routes'));
-app.use('/api/records', require('./app/routes/record.routes'));
+app.use('/api/meals', require('./app/routes/meal.routes'));
 
 module.exports = app;
 
 //require("./app/routes/user.routes")(app);
-//require("./app/routes/record.routes")(app);
+//require("./app/routes/meal.routes")(app);
 //require("./app/routes/food.routes")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

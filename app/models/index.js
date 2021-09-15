@@ -18,6 +18,7 @@ var sequelize;
 switch (deployType){
   case 'test':
     sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
+      logging: false,
       host: dbConfig.HOST,
       dialect: dbConfig.dialect,
       operatorsAliases: false,
@@ -53,9 +54,23 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.users = require("./user.model.js")(sequelize, Sequelize);
 db.foods = require("./food.model.js")(sequelize, Sequelize);
-db.records = require("./record.model.js")(sequelize, Sequelize);
+db.users = require("./user.model.js")(sequelize, Sequelize);
+
+db.meals = require("./meal.model.js")(sequelize, Sequelize);
+
+
+
+//Asociaciones
+db.users.hasMany(db.meals, {foreignKey: "userId"});
+
+db.meals.belongsTo(db.users, {
+  as: 'user',
+  foreignKey: "userId"
+})
+
+db.meals.hasMany(db.foods, {as: "Food"});
+
 
 
 module.exports = db;

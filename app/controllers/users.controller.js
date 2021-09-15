@@ -46,9 +46,11 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all Users from the database.
-exports.findAll = (req, res) => {
-    const name = req.query.name;
+// Retrieve  Users from the database.
+exports.findUsers = (req, res) => {
+
+    if(!req.query.userId || req.query.userId == ""){ //Quiero buscar todos
+      const name = req.query.name;
     var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
   
     User.findAll({ where: condition })
@@ -61,16 +63,14 @@ exports.findAll = (req, res) => {
             err.message || "Error while retrieving users."
         });
       });
-};
+    }
+    else{ //Quiero buscar uno
+      const userId = req.query.userId;
 
-// Find a single name with an id
-exports.findOne = (req, res) => {
-    const id = req.params.id;
-
-    User.findByPk(id)
+    User.findByPk(userId)
       .then(data => {
         if(!data){
-          res.status(404).send(
+          res.status(400).send(
             {message: "Not Found"}
           )
         }
@@ -78,19 +78,21 @@ exports.findOne = (req, res) => {
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error retrieving user with id=" + id
+          message: "Error retrieving user with id=" + userId
         });
       });
+
+    }
+    
 };
+
 
 // Update a User by the id in the request
 exports.update = (req, res) => {
-    const id = req.params.id;
-
-    console.log(id);
+    const userId = req.query.userId;
 
     User.update(req.body, {
-      where: { id: id }
+      where: { userId: userId }
     })
       .then(num => {
         if (num == 1) {
@@ -98,25 +100,24 @@ exports.update = (req, res) => {
             message: "User was updated successfully."
           });
         } else {
-          res.status(404).send({
-            message: `Cannot update User with id=${id}. Maybe User was not found or req.body is empty!`
+          res.status(400).send({
+            message: `Cannot update User with userid=${userId}. Maybe User was not found or req.body is empty!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating User with id=" + id
+          message: "Error updating User with userid=" + userId
         });
       });
 };
 
-// Delete a User with the specified id in the request
+// Delete a User with the specified userid in the request
 exports.delete = (req, res) => {
-  console.log(req);
-    const id = req.params.id;
+    const userId = req.query.userId;
 
     User.destroy({
-      where: { id: id }
+      where: { userId: userId }
     })
       .then(num => {
         if (num == 1) {
@@ -124,14 +125,14 @@ exports.delete = (req, res) => {
             message: "User was deleted successfully!"
           });
         } else {
-          res.status(404).send({
-            message: `Cannot delete User with id=${id}. Maybe User was not found!`
+          res.status(400).send({
+            message: `Cannot delete User with userId=${userId}. Maybe User was not found!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Could not delete User with id=" + id
+          message: "Could not delete User with userId=" + userId
         });
       });
 };
@@ -139,18 +140,23 @@ exports.delete = (req, res) => {
 
 // Log in a user
 exports.login = (req, res) => {
-  console.log(req.body);
   if (!req.body.email || !req.body.password ) {
     res.status(400).send({
       message: "Login credentials incomplete"
     });
     return;
   }
+  
   const email = req.body.email;
   const password = (req.body.password).toString();
 
   User.findOne({ where: { email: email, password: password } })
     .then(data => {
+      if(!data){
+        res.status(400).send({
+          message: "No user found with given credentials"
+        })
+      }
       res.send(data); //envio el perfil del usuario...
     })
     .catch(err => {

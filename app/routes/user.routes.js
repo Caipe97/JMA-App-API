@@ -6,17 +6,15 @@
     // Crear un nuevo usuario
     router.post("/register", users.create);
   
-    // Obtener todos los usuarios
-    router.get("/", users.findAll);
-  
-    // Obtener un solo usuario
-    router.get("/:id", users.findOne);
+    // Obtener  usuarios
+    router.get("/", users.findUsers);
+
   
     // Actualizar un usuario
-    router.put("/:id", users.update);
+    router.put("/", users.update);
   
     // Eliminar un usuario por el id
-    router.delete("/:id", users.delete);
+    router.delete("/", users.delete);
 
     //Login a un usuario
     router.post("/login", users.login);

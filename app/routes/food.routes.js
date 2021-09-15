@@ -6,20 +6,17 @@
     // Create new food
     router.post("/", foods.create);
   
-    // Obtener todos los foods
-    router.get("/", foods.findAll);
+    // Obtener foods
+    router.get("/", foods.findFoods);
   
     // Obtener una comida
-    router.get("/:id", foods.findOne);
+    //router.get("/", foods.findOne);
   
     // Actualizar una comida por el id
-    router.put("/:id", foods.update);
+    router.put("/", foods.update);
   
     // Eliminar una comida por el id
-    router.delete("/:id", foods.delete);
-  
-    // Eliminar TODAS las comidas
-    router.delete("/", foods.deleteAll);
+    router.delete("/", foods.delete);
   
     module.exports = router;
     //app.use('/api/foods', router);

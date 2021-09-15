@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 // Create and Save a new Food
 exports.create = (req, res) => {
    // Validate request
-   if (!req.body.name ) {
+   if (!req.body.name || !req.body.recommendedServing || !req.body.caloriesPerServing ) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
@@ -15,6 +15,8 @@ exports.create = (req, res) => {
   // Create a Food
   const food = {
     name: req.body.name,
+    recommendedServing: req.body.recommendedServing,
+    caloriesPerServing: req.body.caloriesPerServing
   };
 
   // Save Food in the database
@@ -30,8 +32,32 @@ exports.create = (req, res) => {
     });
 };
 
-// Retrieve all Foods from the database.
-exports.findAll = (req, res) => {
+// Retrieve Foods from the database.
+exports.findFoods = (req, res) => {
+
+  if(req.query.foodId){
+    //Busco 1 food por su id
+    const foodId = req.query.foodId;
+
+    Food.findByPk(foodId)
+      .then(data => {
+        if(!data){
+          res.status(400).send({
+            message: "Food not Found"
+          })
+        }
+        res.send(data);
+      })
+      .catch(err => {
+        res.status(500).send({
+          message: "Error retrieving food with foodId=" + foodId
+        });
+      });
+
+  }
+  else {
+    //Busco todos los foods
+
     const name = req.query.name;
     var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
   
@@ -45,29 +71,19 @@ exports.findAll = (req, res) => {
             err.message || "Error while retrieving foods."
         });
       });
+
+  }
+    
 };
 
-// Find a single food with an id
-exports.findOne = (req, res) => {
-    const id = req.body.id;
 
-    Food.findByPk(id)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error retrieving food with id=" + id
-        });
-      });
-};
 
 // Update a Food by the id in the request
 exports.update = (req, res) => {
-    const id = req.body.id;
+    const foodId = req.query.foodId;
 
     Food.update(req.body, {
-      where: { id: id }
+      where: { foodId: foodId }
     })
       .then(num => {
         if (num == 1) {
@@ -76,23 +92,24 @@ exports.update = (req, res) => {
           });
         } else {
           res.send({
-            message: `Cannot update Food with id=${id}. Maybe Food was not found or req.body is empty!`
+            message: `Cannot update Food with id=${foodId}. Maybe Food was not found or req.body is empty!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Error updating Food with id=" + id
+          message: "Error updating Food with foodId=" + foodId
         });
       });
 };
 
-// Delete a Food with the specified id in the request
+// Delete a Food with the specified foodId in the request
 exports.delete = (req, res) => {
-    const id = req.body.id;
+    const foodId = req.query.foodId;
+    console.log("ID: "+foodId);
 
     Food.destroy({
-      where: { id: id }
+      where: { foodId: foodId }
     })
       .then(num => {
         if (num == 1) {
@@ -101,31 +118,14 @@ exports.delete = (req, res) => {
           });
         } else {
           res.send({
-            message: `Cannot delete Food with id=${id}. Maybe Food was not found!`
+            message: `Cannot delete Food with foodId=${foodId}. Maybe Food was not found!`
           });
         }
       })
       .catch(err => {
         res.status(500).send({
-          message: "Could not delete User with id=" + id
+          message: "Could not delete User with foodId=" + foodId
         });
       });
-};
-
-// Delete all Foods from the database.
-exports.deleteAll = (req, res) => {
-    Food.destroy({
-        where: {},
-        truncate: false
-      })
-        .then(nums => {
-          res.send({ message: `${nums} Foods were deleted successfully!` });
-        })
-        .catch(err => {
-          res.status(500).send({
-            message:
-              err.message || "Some error occurred while removing all Foods."
-          });
-        });
 };
 

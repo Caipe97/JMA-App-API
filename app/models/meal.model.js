@@ -1,6 +1,11 @@
 module.exports = (sequelize, Sequelize) => {
-    const Record = sequelize.define("record", {
-      foodName: {
+    const Meal = sequelize.define("Meal", {
+      mealId: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true 
+      },
+      name: {
         type: Sequelize.STRING
       },
       gramAmount: {
@@ -9,11 +14,8 @@ module.exports = (sequelize, Sequelize) => {
       dateEaten: {
         type: Sequelize.DATE
       },
-      userID: {
-        type: Sequelize.INTEGER
-      }
     });
   
-    return Record;
+    return Meal;
   };
   
