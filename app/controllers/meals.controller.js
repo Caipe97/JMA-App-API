@@ -1,6 +1,9 @@
+const { foods } = require("../models");
 const db = require("../models");
 const Meal = db.meals;
 const User = db.users;
+const Food = db.foods;
+//const FoodMeal = db.foodsMeals;
 const Op = db.Sequelize.Op;
 
 function isDateOk(dateString){
@@ -10,11 +13,99 @@ function isDateOk(dateString){
   return 1;
 }
 
+
+function parseMealMultipleResponse(data){
+
+  //Función que recibe unas meals, le busca sus foods asociados y las cantidades de cada uno
+  let retResponse = [];
+  if(data == null){
+    return retResponse;
+  }
+
+  data.forEach(meal => {
+
+    let response = {
+      mealId: meal.dataValues.mealId,
+      name: meal.dataValues.name,
+      dateEaten: meal.dataValues.dateEaten,
+      userId: meal.dataValues.userId,
+      FoodList: [] //Le agrego acá los foods que contiene luego...
+    };
+  
+    if(meal.Food.length){ //Si data tiene Foods asociados..
+      meal.Food.forEach(food => {
+        response.FoodList.push(
+          {
+            quantity: food.FoodMeal.quantity,
+            food: {
+              foodId: food.foodId,
+              name: food.name,
+              recommendedServing: food.recommendedServing,
+              caloriesPerServing: food.caloriesPerServing,
+              createdAt: food.createdAt,
+              updatedAt: food.updatedAt
+            }
+          }
+        )
+        
+      });
+    }
+    retResponse.push(response);
+
+
+
+  })
+
+  return(retResponse);
+
+}
+
+function parseMealSingleResponse(data){
+
+  //Función que recibe unas meals, le busca sus foods asociados y las cantidades de cada uno
+    if(data == null){
+      return {mealId: -1};
+    }
+    let response = {
+      mealId: data.dataValues.mealId,
+      name: data.dataValues.name,
+      dateEaten: data.dataValues.dateEaten,
+      userId: data.dataValues.userId,
+      FoodList: [] //Le agrego acá los foods que contiene luego...
+    };
+
+    if(data == null){
+      return response;
+    }
+  
+    if(data.Food.length){ //Si data tiene Foods asociados..
+      data.Food.forEach(food => {
+        response.FoodList.push(
+          {
+            quantity: food.FoodMeal.quantity,
+            food: {
+              foodId: food.foodId,
+              name: food.name,
+              recommendedServing: food.recommendedServing,
+              caloriesPerServing: food.caloriesPerServing,
+              createdAt: food.createdAt,
+              updatedAt: food.updatedAt
+            }
+          }
+        )
+        
+      });
+    }
+
+  return(response);
+
+}
+
 // Create and Save a new Meal
 exports.create = async (req, res) => {
-   // ValmealIdate request
-   //console.log(req.body);
-   if (!req.body.name || !req.body.gramAmount || !req.body.dateEaten || !req.query.userId ) {
+   // Validate request
+   console.log(req.body);
+   if (!req.body.name  || !req.body.dateEaten || !req.query.userId ) {
     
     res.status(400).send({
       message: "Content can not be empty!"
@@ -31,27 +122,31 @@ exports.create = async (req, res) => {
   // Create a Meal
   const meal = {
     name: req.body.name,
-    gramAmount: parseInt(req.body.gramAmount),
     dateEaten: new Date(req.body.dateEaten),
   };
+  
+
 try{
   const aUser =  await User.findByPk(req.query.userId);
   const aMeal =  await Meal.create(meal);
 
   await aUser.addMeal(aMeal);
 
+  //Agrego los foods al meal
+
+  for(const ingredient of req.body.FoodList){
+
+    let theFood = await Food.findByPk(ingredient.food.foodId);
+    await aMeal.addFood(theFood, {through: {quantity: ingredient.quantity}});
+  }
+
   //El hack mas horrible de todos...
-  Meal.findByPk(aMeal.mealId)
-      .then(data => {
-        res.send(data);
-      })
-      .catch(err => {
-        res.status(500).send({
-          message: "Error sending a Meal with mealId=" + aMeal.mealId
-        });
-      });
+
+  this.findMeals(req, res);
+
 }
 catch(err){
+  console.log(err);
   res.status(500).send({
     message:
       err.message || "Error while creating new Meal."
@@ -69,13 +164,26 @@ exports.findMeals = (req, res) => {
   if (req.query.userId){
     //Busco todos los meals segun un userId
     const userId = req.query.userId;
-    var condition = {userId: userId};
 
-    Meal.findAll({ where: condition })
+    Meal.findAll({ 
+      where: {userId: userId},
+      include: Food
+     })
       .then(data => {
-        res.send(data);
+        if(!data){
+          res.status(400).send(
+            {message: "No meals found for userId = " + userId}
+          )
+          return;
+        }
+
+        //Happy path
+        let response = parseMealMultipleResponse(data);
+
+        res.send(response);
       })
       .catch(err => {
+        console.log(err)
         res.status(500).send({
           message:
             err.message || "Error while retrieving Meals."
@@ -83,15 +191,33 @@ exports.findMeals = (req, res) => {
       });
   }
   else if (req.query.mealId){
-    //Busco un meal segun su id
+    //Busco un meal segun su id..
         const mealId = req.query.mealId;
     
-        Meal.findByPk(mealId)
+          Meal.findOne({
+            where: {
+              mealId: mealId
+            },
+            include: Food
+          })
           .then(data => {
-            res.send(data);
+            if( data == null){
+              res.status(400).send(
+                {message: "No meal found with mealId= " + mealId}
+              )
+              return;
+            }
+            //Happy path
+            //console.log("Data from query:");
+            //console.log(data);
+            let response = parseMealSingleResponse(data);            
+            
+            res.send(response);
           })
           .catch(err => {
+            console.log(err);
             res.status(500).send({
+              
               message: "Error retrieving Meal with mealId=" + mealId
             });
           });
@@ -107,23 +233,6 @@ exports.findMeals = (req, res) => {
   
 };
 
-// Retrieve all meals
-
-/*exports.findAll = (req, res) => {
-
-  Meal.findAll()
-    .then(data => {
-      res.send(data);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Error while retrieving Meals."
-      });
-    });
-};*/
-
-// Find a single Meal with an mealId
 
 
 // Update a Meal by the mealId in the request
@@ -139,13 +248,13 @@ exports.update = (req, res) => {
             message: "Meal was updated successfully."
           });
         } else {
-          res.send({
+          res.status(400).send({
             message: `Cannot update Meal with mealId=${mealId}. Maybe Meal was not found or req.body is empty!`
           });
         }
       })
       .catch(err => {
-        console.log(err);
+        //console.log(err);
         res.status(500).send({
           message: "Error updating Meal with mealId=" + mealId
         });
@@ -155,7 +264,12 @@ exports.update = (req, res) => {
 // Delete a Meal with the specified mealId in the request
 exports.delete = (req, res) => {
     //console.log(req);
-    const mealId = req.body.mealId;
+    if(!req.query.mealId){
+      res.status(400).send({
+        message: `No mealId parameter`
+      });
+    }
+    const mealId = req.query.mealId;
 
     Meal.destroy({
       where: { mealId: mealId }
@@ -167,13 +281,14 @@ exports.delete = (req, res) => {
             deletedMealID: mealId,
           });
         } else {
-          console.log(num);
+          //console.log(num);
           res.status(400).send({
             message: `Cannot delete Meal with mealId=${mealId}. Maybe Meal was not found!`
           });
         }
       })
       .catch(err => {
+        console.log(err);
         res.status(500).send({
           message: "Could not delete User with mealId=" + mealId
         });

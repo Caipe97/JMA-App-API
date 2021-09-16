@@ -76,8 +76,6 @@ exports.findFoods = (req, res) => {
     
 };
 
-
-
 // Update a Food by the id in the request
 exports.update = (req, res) => {
     const foodId = req.query.foodId;
@@ -91,8 +89,8 @@ exports.update = (req, res) => {
             message: "Food was updated successfully."
           });
         } else {
-          res.send({
-            message: `Cannot update Food with id=${foodId}. Maybe Food was not found or req.body is empty!`
+          res.status(400).send({
+            message: `Error updating Food with foodId=${foodId}. Maybe Food was not found or req.body is empty!`
           });
         }
       })
@@ -117,7 +115,7 @@ exports.delete = (req, res) => {
             message: "Food was deleted successfully!"
           });
         } else {
-          res.send({
+          res.status(400).send({
             message: `Cannot delete Food with foodId=${foodId}. Maybe Food was not found!`
           });
         }

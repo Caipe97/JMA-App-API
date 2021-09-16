@@ -89,6 +89,11 @@ exports.findUsers = (req, res) => {
 
 // Update a User by the id in the request
 exports.update = (req, res) => {
+    if(!req.query.userId){
+      res.status(400).send({
+        message: "no userId query parameter"
+      })
+    }
     const userId = req.query.userId;
 
     User.update(req.body, {

@@ -58,6 +58,7 @@ db.foods = require("./food.model.js")(sequelize, Sequelize);
 db.users = require("./user.model.js")(sequelize, Sequelize);
 
 db.meals = require("./meal.model.js")(sequelize, Sequelize);
+db.foodsMeals = require("./foodMeal.model.js")(sequelize, Sequelize);
 
 
 
@@ -69,8 +70,7 @@ db.meals.belongsTo(db.users, {
   foreignKey: "userId"
 })
 
-db.meals.hasMany(db.foods, {as: "Food"});
-
-
+db.meals.belongsToMany(db.foods, {through: db.foodsMeals, foreignKey: "mealId"});
+db.foods.belongsToMany(db.meals, {through: db.foodsMeals, foreignKey: "foodId"});
 
 module.exports = db;

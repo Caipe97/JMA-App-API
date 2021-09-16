@@ -50,7 +50,7 @@ describe("api/foods", () => {
 
     });
     describe("GET /", () => {
-        it("should error out if no query is provided", async () => {
+        it("should error out if no query parameter is provided", async () => {
 
             //setup
             const testFoods = [
@@ -131,8 +131,25 @@ describe("api/foods", () => {
 
             expect(aFood.recommendedServing).to.equal(95);
         });
+        it("should error out if the foodId is not found", async () => {
 
-        it("should ignore any other parameters", async () => {
+            //setup
+            const testFoods = [
+                {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198},
+                {name: "Pizza con Pala", recommendedServing: 100, caloriesPerServing: 200},
+            ];
+
+            await Food.bulkCreate(testFoods);
+
+            const testUpdate = {recommendedServing: 95};
+
+            //Hacer el PUT
+            let res = await request(app).put("/api/foods?foodId=5").send(testUpdate);
+
+            expect(res.status).to.equal(400);
+        });
+
+        it("should error out if any other parameters are updated", async () => {
 
             //setup
             const testFoods = [
@@ -147,7 +164,7 @@ describe("api/foods", () => {
             //Hacer el PUT
             let res = await request(app).put("/api/foods?foodId=2").send(testUpdate);
 
-            expect(res.status).to.equal(200);
+            expect(res.status).to.equal(400);
 
             //Busco en DB
             const aFood = await Food.findByPk(2);
@@ -175,6 +192,22 @@ describe("api/foods", () => {
             const aFood = await Food.findByPk(2);
 
             expect(aFood).to.equal(null);
+        });
+        it("should error out if the foodId didnt exist", async () => {
+
+            //setup
+            const testFoods = [
+                {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198},
+                {name: "Pizza con Pala", recommendedServing: 100, caloriesPerServing: 200},
+            ];
+
+            await Food.bulkCreate(testFoods);
+
+            //Hacer el delete
+            let res = await request(app).delete("/api/foods?foodId=3");
+
+            expect(res.status).to.equal(400);
+
         });
     });
     
