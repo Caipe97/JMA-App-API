@@ -276,10 +276,17 @@ exports.delete = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "Meal was deleted successfully!",
-            deletedMealID: mealId,
-          });
+          //Tengo que sendear todos los meals del user, si es que me pasaron el userId
+          if(req.query.userId){
+            this.findMeals(req, res);
+          }
+          else{
+            res.send({
+              message: "Meal was deleted successfully!",
+              deletedMealID: mealId,
+            });
+          }
+          
         } else {
           //console.log(num);
           res.status(400).send({
