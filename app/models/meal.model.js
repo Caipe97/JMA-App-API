@@ -8,9 +8,6 @@ module.exports = (sequelize, Sequelize) => {
       name: {
         type: Sequelize.STRING
       },
-      gramAmount: {
-        type: Sequelize.INTEGER
-      },
       dateEaten: {
         type: Sequelize.DATE
       },

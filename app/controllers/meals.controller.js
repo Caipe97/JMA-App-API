@@ -137,6 +137,11 @@ try{
   for(const ingredient of req.body.FoodList){
 
     let theFood = await Food.findByPk(ingredient.food.foodId);
+    if(!theFood){
+      res.status(400).send(
+        {message: "No Food found with id" + ingredient.food.foodId}
+      )
+    }
     await aMeal.addFood(theFood, {through: {quantity: ingredient.quantity}});
   }
 
@@ -228,37 +233,69 @@ exports.findMeals = (req, res) => {
       message: "bad parameters"
     });
   }
-
-
-  
+ 
 };
 
 
 
 // Update a Meal by the mealId in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     const mealId = req.query.mealId;
 
-    Meal.update(req.body, {
-      where: { mealId: mealId }
-    })
-      .then(num => {
-        if (num == 1) {
-          res.send({
-            message: "Meal was updated successfully."
-          });
-        } else {
-          res.status(400).send({
-            message: `Cannot update Meal with mealId=${mealId}. Maybe Meal was not found or req.body is empty!`
-          });
-        }
-      })
-      .catch(err => {
-        //console.log(err);
-        res.status(500).send({
-          message: "Error updating Meal with mealId=" + mealId
-        });
+    //enlisto los updates
+    const name = req.body.name;
+    const dateEaten = req.body.dateEaten; //En string
+
+    if (!isDateOk(dateEaten)){
+      res.status(400).send(
+        {message: "Bad date format"}
+      )
+    }
+
+    //Tengo que encontrar el Meal
+      const theMeal = await Meal.findOne({
+        where: {
+          mealId: mealId
+        },
+        include: Food
       });
+      console.log(theMeal);
+      if(!theMeal){
+        res.status(400).send(
+          {message: "Error finding meal"}
+        )
+        return;
+      }
+    //Le updateo los parametros "simples" (que no requieren asociación)
+    console.log("ms1");
+
+    theMeal.name = name;
+    theMeal.dateEaten = new Date(dateEaten);
+    await theMeal.save();
+    console.log("ms2");
+    if(req.body.FoodList){
+      //Le destruyo las foods existentes y le agrego las que me pasaron 
+      //await theMeal.setFoods([]);
+      await db.foodsMeals.destroy(
+        {where: {mealId: mealId}}
+      )
+      await theMeal.reload();
+      console.log("ms4");
+      for(const ingredient of req.body.FoodList){
+        console.log("ms5");
+  
+        let theFood = await Food.findByPk(ingredient.food.foodId);
+        if(!theFood){
+          res.status(400).send(
+            {message: "No Food found with id" + ingredient.food.foodId}
+          )
+        }
+        await theMeal.addFood(theFood, {through: {quantity: ingredient.quantity}});
+      }
+    }
+    
+
+    this.findMeals(req, res)
 };
 
 // Delete a Meal with the specified mealId in the request

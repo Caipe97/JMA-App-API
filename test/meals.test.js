@@ -361,7 +361,89 @@ describe("api/meals", () => {
             expect(res.status).to.equal(400);
 
         });
-        
+        it("should update all foods it has", async () => {
+
+            //setup
+            const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            //const testMeal = {name: "Pizza con pala", dateEaten: "2017-09-08"};
+
+            await Food.create({name: "Pizza", recommendedServing: 100, caloriesPerServing: 108});
+            await Food.create({name: "Pala", recommendedServing: 100, caloriesPerServing: 80});
+
+            const aUser = await User.create(testUser);
+
+            
+
+            const createdFood = {
+                name: "Pizza con Pala",
+                dateEaten: "2014-09-08",
+                FoodList: [
+                    {
+                        quantity: 1,
+                        food: {
+                            foodId: 1,
+                            name: "Pizza",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                    {
+                        quantity: 5,
+                        food: {
+                            foodId: 2,
+                            name: "Pala",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                ] 
+            }
+            let res = await request(app).post("/api/meals?userId=1").send(createdFood);
+
+            expect(res.status).to.equal(200);
+
+            const testUpdate = {
+                name: "Mas Pizza que Pala",
+                dateEaten: "2014-09-08",
+                FoodList: [
+                    {
+                        quantity: 3,
+                        food: {
+                            foodId: 1,
+                            name: "Pizza",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                    {
+                        quantity: 1,
+                        food: {
+                            foodId: 2,
+                            name: "Pala",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                ] 
+            }
+
+             res = await request(app).put("/api/meals?mealId=1").send(testUpdate);
+
+            expect(res.status).to.equal(200);
+            console.log("The res", res.body);
+            expect(res.body.name).to.equal("Mas Pizza que Pala");
+            expect(res.body.FoodList[0].quantity).to.equal(3);
+            expect(res.body.FoodList[1].quantity).to.equal(1);
+
+        });
     });
     describe("DELETE /:mealId", () => {
         it("should delete a meal", async () => {
