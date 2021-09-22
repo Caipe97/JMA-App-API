@@ -269,6 +269,8 @@ exports.update = async (req, res) => {
     //Le updateo los parametros "simples" (que no requieren asociación)
     console.log("ms1");
 
+    req.query.userId = theMeal.userId;
+
     theMeal.name = name;
     theMeal.dateEaten = new Date(dateEaten);
     await theMeal.save();

@@ -320,7 +320,7 @@ describe("api/meals", () => {
 
         
 
-    describe("PUT /byId/:id", () => {
+    describe("PUT ?mealId", () => {
         it("should update a meal", async () => {
 
             //setup
@@ -439,9 +439,9 @@ describe("api/meals", () => {
 
             expect(res.status).to.equal(200);
             console.log("The res", res.body);
-            expect(res.body.name).to.equal("Mas Pizza que Pala");
-            expect(res.body.FoodList[0].quantity).to.equal(3);
-            expect(res.body.FoodList[1].quantity).to.equal(1);
+            expect(res.body[0].name).to.equal("Mas Pizza que Pala");
+            expect(res.body[0].FoodList[0].quantity).to.equal(3);
+            expect(res.body[0].FoodList[1].quantity).to.equal(1);
 
         });
     });
