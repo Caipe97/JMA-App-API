@@ -9,6 +9,7 @@
     "cors": "^2.8.5",
     "coveralls": "^3.1.1",
     "debug": "^4.3.2",
+    "depcheck": "^1.4.2",
     "express": "^4.17.1",
     "mocha": "^9.1.1",
     "mocha-lcov-reporter": "^1.3.0",
@@ -32,7 +33,8 @@
     "test": "npm run setTest && nyc --reporter=lcov mocha --timeout 15000 --exit ",
     "runLocal": "npm run setLocal && node server.js",
     "start": "npm run setProd && node server.js",
-    "coverage": "npm run setTest && nyc report --reporter=text"
+    "coverage": "npm run setTest && nyc report --reporter=text",
+    "depcheck": "depcheck"
   },
   "keywords": [
     "nodejs",
