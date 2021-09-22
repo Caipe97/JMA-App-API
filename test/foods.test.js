@@ -172,7 +172,7 @@ describe("api/foods", () => {
             expect(aFood.fooBar).to.equal(undefined);
         }); 
     });
-    describe("DELETE /:foodId", () => {
+    describe("DELETE ?foodId", () => {
         it("should delete a food based on its foodId", async () => {
 
             //setup

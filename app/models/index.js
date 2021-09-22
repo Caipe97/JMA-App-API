@@ -59,6 +59,7 @@ db.users = require("./user.model.js")(sequelize, Sequelize);
 
 db.meals = require("./meal.model.js")(sequelize, Sequelize);
 db.foodsMeals = require("./foodMeal.model.js")(sequelize, Sequelize);
+db.foodSuggestions = require("./foodSuggestion.model.js")(sequelize, Sequelize);
 
 
 

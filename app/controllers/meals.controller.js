@@ -182,9 +182,7 @@ exports.findMeals = (req, res) => {
           return;
         }
 
-        //Happy path
         let response = parseMealMultipleResponse(data);
-
         res.send(response);
       })
       .catch(err => {
