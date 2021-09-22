@@ -32,7 +32,7 @@ describe("api/users", () => {
             expect(res.body.length).to.equal(3);
         });
     });
-
+/*
     describe("GET /:userId", () => {
         it("should return one user", async () => {
             //setup
@@ -48,7 +48,7 @@ describe("api/users", () => {
             expect(res.body.email).to.equal("manu.crespo97@gmail.com");
         })
     });
-
+*/
     describe("POST /", () => {
         it("should upload a new user", async () => {
             const testUser = 
