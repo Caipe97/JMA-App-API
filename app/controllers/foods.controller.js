@@ -81,6 +81,15 @@ exports.findFoods = (req, res) => {
 
   }
   else {
+    let resArray = [];
+    if(req.body.userId){
+      //agrego también todos los custom food de cierto user
+      Food.findAll({where: {userId: req.body.userId}})
+      .then(data =>{
+        console.log(data);
+        resArray.push(data);
+      })
+    }
     //Busco todos los foods
 
     const name = req.query.name;
@@ -129,6 +138,7 @@ exports.update = (req, res) => {
 // Delete a Food with the specified foodId in the request
 exports.delete = (req, res) => {
     const foodId = req.query.foodId;
+
     console.log("ID: "+foodId);
 
     Food.destroy({
@@ -137,8 +147,8 @@ exports.delete = (req, res) => {
       .then(num => {
         if (num == 1) {
           res.send({
-            message: "Food was deleted successfully!"
-          });
+            message: "Food deleted successfully"
+          })
         } else {
           res.status(400).send({
             message: `Cannot delete Food with foodId=${foodId}. Maybe Food was not found!`
@@ -146,6 +156,7 @@ exports.delete = (req, res) => {
         }
       })
       .catch(err => {
+        console.log(err);
         res.status(500).send({
           message: "Could not delete User with foodId=" + foodId
         });
