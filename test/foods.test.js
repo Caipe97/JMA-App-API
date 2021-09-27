@@ -34,8 +34,6 @@ describe("api/foods", () => {
             expect(aFood.name).to.equal("Milanesa");
             expect(aFood.recommendedServing).to.equal(85);
             expect(aFood.caloriesPerServing).to.equal(198);
-
-
         });
         it("should error if there is a parameter missing", async () => {
 
@@ -209,6 +207,32 @@ describe("api/foods", () => {
             expect(res.status).to.equal(400);
 
         });
+        
+    });
+    describe("Custom Foods POST", () => {
+        it("should create a custom food based on a userId", async () => {
+
+            //setup
+            const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+
+            await User.create(testUser);
+
+            const testUserFood = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198, userId: 1};
+            const testFood = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198};
+
+            //Hago un POST
+            let res = await request(app).post("/api/foods").send(testFood);
+            expect(res.status).to.equal(200);
+            console.log(res.body);
+            res = await request(app).post("/api/foods").send(testUserFood);
+            console.log(res.body);
+
+            expect(res.status).to.equal(200);
+            expect(res.body[1].name).to.equal("Milanesa");
+            expect(res.body[1].userId).to.equal(1);
+
+        });
+        
     });
     
 

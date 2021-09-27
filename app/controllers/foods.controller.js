@@ -1,9 +1,10 @@
 const db = require("../models");
 const Food = db.foods;
+const User = db.users;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Food
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
    // Validate request
    if (!req.body.name || !req.body.recommendedServing || !req.body.caloriesPerServing ) {
     res.status(400).send({
@@ -19,10 +20,29 @@ exports.create = (req, res) => {
     caloriesPerServing: req.body.caloriesPerServing
   };
 
-  // Save Food in the database
-  Food.create(food)
+  //Si viene con un userId, se trata de un custom food, hay que guardarlo como tal
+  if(req.body.userId){
+    let aUser;
+    try{
+      aUser = await User.findByPk(req.body.userId);
+      //console.log(aUser);
+    }
+    catch(err){
+      console.log(err);
+      res.status(500).send({
+        message:
+          err.message || "Error getting user with that Id"
+      });
+    }
+    theFood = await Food.create(food);
+    await aUser.addFood(theFood);
+  }
+  else{
+
+    // Save Food in the database
+    Food.create(food)
     .then(data => {
-      res.send(data);
+      this.findFoods(req,res);
     })
     .catch(err => {
       res.status(500).send({
@@ -30,6 +50,11 @@ exports.create = (req, res) => {
           err.message || "Error while creating new Food."
       });
     });
+
+    
+  }
+  this.findFoods(req, res);
+  
 };
 
 // Retrieve Foods from the database.

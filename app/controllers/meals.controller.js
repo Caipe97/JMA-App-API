@@ -104,7 +104,7 @@ function parseMealSingleResponse(data){
 // Create and Save a new Meal
 exports.create = async (req, res) => {
    // Validate request
-   console.log(req.body);
+   //console.log(req.body);
    if (!req.body.name  || !req.body.dateEaten || !req.query.userId ) {
     
     res.status(400).send({
@@ -151,7 +151,7 @@ try{
 
 }
 catch(err){
-  console.log(err);
+  //console.log(err);
   res.status(500).send({
     message:
       err.message || "Error while creating new Meal."
@@ -259,7 +259,7 @@ exports.update = async (req, res) => {
         },
         include: Food
       });
-      console.log(theMeal);
+      //console.log(theMeal);
       if(!theMeal){
         res.status(400).send(
           {message: "Error finding meal"}

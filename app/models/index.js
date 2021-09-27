@@ -64,6 +64,7 @@ db.foodsMeals = require("./foodMeal.model.js")(sequelize, Sequelize);
 
 //Asociaciones
 db.users.hasMany(db.meals, {foreignKey: "userId"});
+db.users.hasMany(db.foods, {foreignKey: "userId"});
 
 db.meals.belongsTo(db.users, {
   as: 'user',
