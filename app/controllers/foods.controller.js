@@ -59,6 +59,9 @@ exports.create = async (req, res) => {
 
 // Retrieve Foods from the database.
 exports.findFoods = (req, res) => {
+  if(req.body.userId){ //Esto es por si me pinguean desde el post.
+    req.query.userId = req.body.userId;
+  }
 
   if(req.query.foodId){
     //Busco 1 food por su id
@@ -81,19 +84,14 @@ exports.findFoods = (req, res) => {
 
   }
   else {
-    let resArray = [];
-    if(req.body.userId){
-      //agrego también todos los custom food de cierto user
-      Food.findAll({where: {userId: req.body.userId}})
-      .then(data =>{
-        console.log(data);
-        resArray.push(data);
-      })
+    //Si se pide un userId, se piden tambien los customFoods
+    var condition = req.query.userId ? {[Op.or]: [
+                                        { userId: null },
+                                        { userId: req.query.userId }
+                                      ]} : {userId: null};
     }
     //Busco todos los foods
 
-    const name = req.query.name;
-    var condition = name ? { name: { [Op.iLike]: `%${name}%` } } : null;
   
     Food.findAll({ where: condition })
       .then(data => {
@@ -105,9 +103,6 @@ exports.findFoods = (req, res) => {
             err.message || "Error while retrieving foods."
         });
       });
-
-  }
-    
 };
 
 // Update a Food by the id in the request

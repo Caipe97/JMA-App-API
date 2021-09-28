@@ -223,13 +223,50 @@ describe("api/foods", () => {
             //Hago un POST
             let res = await request(app).post("/api/foods").send(testFood);
             expect(res.status).to.equal(200);
-            console.log(res.body);
             res = await request(app).post("/api/foods").send(testUserFood);
-            console.log(res.body);
 
             expect(res.status).to.equal(200);
             expect(res.body[1].name).to.equal("Milanesa");
             expect(res.body[1].userId).to.equal(1);
+
+        });
+        
+    });
+    describe("Custom Foods GET", () => {
+        it("should only get custom foods for a specific user", async () => {
+
+            //setup
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const anotherUserData = { name: "Gertrudis", surname: "Crespo", email: "gertrudis@gmail.com", password: "1234", birthday: new Date("Jan 8, 1987"), gender: "female", weight: 75, height: 1.75};
+
+            const aUser = await User.create(aUserData);
+            const anotherUser = await User.create(anotherUserData);
+            const testGenericFoodData = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198};
+
+            await Food.create(testGenericFoodData);
+
+            const aUserFoodData = {name: "Milanesa a la Romana", recommendedServing: 71, caloriesPerServing: 300};
+            const anotherUserFoodData = {name: "Milanesa Napolitana Light", recommendedServing: 71, caloriesPerServing: 150};
+
+            aUser.addFood(await Food.create(aUserFoodData));
+            anotherUser.addFood(await Food.create(anotherUserFoodData));
+
+            let res = await request(app).get("/api/foods?userId=1");
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(2);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[0].userId).to.equal(null);
+            expect(res.body[1].name).to.equal("Milanesa a la Romana");
+            expect(res.body[1].userId).to.equal(1);
+
+
+            res = await request(app).get("/api/foods?userId=2");
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(2);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[0].userId).to.equal(null);
+            expect(res.body[1].name).to.equal("Milanesa Napolitana Light");
+            expect(res.body[1].userId).to.equal(2);
 
         });
         
