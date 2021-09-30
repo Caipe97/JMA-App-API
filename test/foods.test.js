@@ -1,6 +1,5 @@
 const db = require('../app/models');
 const User = db.users;
-const Meal = db.meals;
 const Food = db.foods;
 
 const request = require('supertest');
@@ -17,7 +16,7 @@ describe("api/foods", () => {
           });{ force: true }
     });
 
-    describe("POST /byUserId", () => {
+    describe("POST", () => {
         it("should create a food", async () => {
 
             //setup
@@ -44,7 +43,19 @@ describe("api/foods", () => {
             let res = await request(app).post("/api/foods").send(testFood);
 
             expect(res.status).to.equal(400);
-        });      
+        });
+        it("should go to the generic foodCategory if it is not specified", async () => {
+
+            //setup
+            const testFood = {name: "Milanesa", caloriesPerServing: 198, recommendedServing: 100};
+
+            //Hacer el Post
+            let res = await request(app).post("/api/foods").send(testFood);
+            console.log(res.body);
+
+            expect(res.status).to.equal(200);
+            expect(res.body[0].foodCategoryId).to.equal(null);
+        });     
 
     });
     describe("GET /", () => {
@@ -259,7 +270,6 @@ describe("api/foods", () => {
             expect(res.body[1].name).to.equal("Milanesa a la Romana");
             expect(res.body[1].userId).to.equal(1);
 
-
             res = await request(app).get("/api/foods?userId=2");
             expect(res.status).to.equal(200);
             expect(res.body.length).to.equal(2);
@@ -267,7 +277,6 @@ describe("api/foods", () => {
             expect(res.body[0].userId).to.equal(null);
             expect(res.body[1].name).to.equal("Milanesa Napolitana Light");
             expect(res.body[1].userId).to.equal(2);
-
         });
         
     });

@@ -60,6 +60,7 @@ app.get("/", (req, res) => {
 app.use('/api/users', require('./app/routes/user.routes'));
 app.use('/api/foods', require('./app/routes/food.routes'));
 app.use('/api/meals', require('./app/routes/meal.routes'));
+app.use('/api/foodCategories', require('./app/routes/foodCategory.routes'));
 
 module.exports = app;
 

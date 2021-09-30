@@ -1,18 +1,21 @@
 const db = require("../models");
 const Food = db.foods;
 const User = db.users;
+const FoodCategory = db.foodCategories;
 const Op = db.Sequelize.Op;
 
 // Create and Save a new Food
 exports.create = async (req, res) => {
    // Validate request
-   if (!req.body.name || !req.body.recommendedServing || !req.body.caloriesPerServing ) {
+   if (!req.body.name || !req.body.recommendedServing || !req.body.caloriesPerServing) {
     res.status(400).send({
       message: "Content can not be empty!"
     });
     return;
   }
+  
 
+  
   // Create a Food
   const food = {
     name: req.body.name,
@@ -20,39 +23,33 @@ exports.create = async (req, res) => {
     caloriesPerServing: req.body.caloriesPerServing
   };
 
+  //Creo la Food en la bd
+  let theFood = await Food.create(food);
+
+
   //Si viene con un userId, se trata de un custom food, hay que guardarlo como tal
   if(req.body.userId){
     let aUser;
-    try{
-      aUser = await User.findByPk(req.body.userId);
-      //console.log(aUser);
+    aUser = await User.findByPk(req.body.userId);
+    if(!aUser){
+      res.status(400).send(
+        {message: "Cannot find the userId specified"}
+      )
     }
-    catch(err){
-      console.log(err);
-      res.status(500).send({
-        message:
-          err.message || "Error getting user with that Id"
-      });
-    }
-    theFood = await Food.create(food);
     await aUser.addFood(theFood);
   }
-  else{
+  //Si viene con un foodCategoryId, metemos la food ahi, sino es un uncategorized (foodCategoryId = null)
+  if(req.body.foodCategoryId){
+    let aFoodCategory = await FoodCategory.findByPk(req.body.foodCategoryId);
+    if(!aFoodCategory){
+      res.status(400).send(
+        {message: "Cannot find the foodCategoryId specified"}
+      )
+    }
+    await aFoodCategory.addFood(theFood);
 
-    // Save Food in the database
-    Food.create(food)
-    .then(data => {
-      this.findFoods(req,res);
-    })
-    .catch(err => {
-      res.status(500).send({
-        message:
-          err.message || "Error while creating new Food."
-      });
-    });
-
-    
   }
+
   this.findFoods(req, res);
   
 };
