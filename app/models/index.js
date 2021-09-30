@@ -68,6 +68,7 @@ db.users.hasMany(db.foods, {foreignKey: "userId"});
 db.users.hasMany(db.foodCategories, {foreignKey: "userId"});
 
 db.meals.belongsTo(db.users, {
+  as: 'user',
   foreignKey: "userId"
 });
 
