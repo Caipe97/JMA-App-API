@@ -39,7 +39,7 @@ exports.create = async (req, res) => {
   else{
 
     // Save FoodCategory in the database
-    FoodCategory.create(foodCategory)
+    await FoodCategory.create(foodCategory)
     .catch(err => {
       res.status(500).send({
         message:
