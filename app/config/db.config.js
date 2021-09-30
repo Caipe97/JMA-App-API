@@ -4,7 +4,6 @@ var deployType;
 
 try{
   deployType = fs.readFileSync('./deployType.txt', 'utf8');
-  console.log("Data: ", deployType.toString());
   deployType = deployType.toString();
 }
 catch(e){

@@ -60,8 +60,6 @@ db.meals = require("./meal.model.js")(sequelize, Sequelize);
 db.foodsMeals = require("./foodMeal.model.js")(sequelize, Sequelize);
 db.foodCategories = require("./foodCategory.model.js")(sequelize, Sequelize);
 
-
-
 //Asociaciones
 db.users.hasMany(db.meals, {foreignKey: "userId"});
 db.users.hasMany(db.foods, {foreignKey: "userId"});

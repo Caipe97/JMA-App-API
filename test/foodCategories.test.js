@@ -132,6 +132,52 @@ describe("api/foodCategories", () => {
         });
 
     });
+    describe("PUT", () => {
+        it("should update a  foodCategory", async () => {
+            const testFoodCategory = {name:"Frituras"};
+            await FoodCategory.create(testFoodCategory);
+            const testUpdate = {name:"Las Frituras"};
+
+            res = await request(app).put("/api/foodCategories?foodCategoryId=1").send(testUpdate);
+            expect(res.status).to.equal(200);
+            expect(res.body[0].name).to.equal("Las Frituras");
+
+        });
+        it("should give all generic foodCategories as response", async () => {
+            const testFoodCategory = {name:"Frituras"};
+            const anotherTestFoodCategory = {name:"Verduras"};
+            await FoodCategory.create(testFoodCategory);
+            await FoodCategory.create(anotherTestFoodCategory);
+            const testUpdate = {name:"Las Frituras"};
+
+            res = await request(app).put("/api/foodCategories?foodCategoryId=1").send(testUpdate);
+            expect(res.status).to.equal(200);
+            expect(res.body[0].name).to.equal("Las Frituras");
+            expect(res.body[1].name).to.equal("Verduras");
+
+        });
+        it("should give all generic and custom foodCategories as response, if I pass the userId", async () => {
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const aUser = await User.create(aUserData);
+            
+            const testGenericFoodCategoryData = {name: "Milanesa"};
+
+            await FoodCategory.create(testGenericFoodCategoryData);
+
+            const aUserFoodCategoryData = {name: "Milanesa a la Romana"};
+            const aUserAnotherFoodCategoryData = {name: "papa frita"};
+
+            aUser.addFoodCategory(await FoodCategory.create(aUserFoodCategoryData));
+            aUser.addFoodCategory(await FoodCategory.create(aUserAnotherFoodCategoryData));
+
+            const foodCategoryUpdate = {name: "Papa Frita"};
+
+            let res = await request(app).put("/api/foodCategories?foodCategoryId=3&userId=1").send(foodCategoryUpdate);
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(3);
+            expect(res.body[2].name).to.equal("Papa Frita");
+        });
+    });
         
     
 

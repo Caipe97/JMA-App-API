@@ -1,6 +1,7 @@
 const db = require('../app/models');
 const User = db.users;
 const Food = db.foods;
+const FoodCategory = db.foodCategories;
 
 const request = require('supertest');
 const expect = require('chai').expect;
@@ -13,7 +14,7 @@ describe("api/foods", () => {
         //Elimino todo de la base de datos.
        await db.sequelize.sync({ force: true }).then(() => {
             console.log("Drop and re-sync db.");
-          });{ force: true }
+          });
     });
 
     describe("POST", () => {
@@ -148,7 +149,7 @@ describe("api/foods", () => {
             ];
 
             await Food.bulkCreate(testFoods);
-
+            console.log("HEY HEEY");
             const testUpdate = {recommendedServing: 95};
 
             //Hacer el PUT
@@ -217,6 +218,26 @@ describe("api/foods", () => {
             expect(res.status).to.equal(400);
 
         });
+        it("should give all other foods as a response", async () => {
+
+            //setup
+            const testFoods = [
+                {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198},
+                {name: "Mayonesa", recommendedServing: 85, caloriesPerServing: 198},
+                {name: "Pizza con Pala", recommendedServing: 100, caloriesPerServing: 200},
+            ];
+
+            await Food.bulkCreate(testFoods);
+
+            //Hacer el delete
+            let res = await request(app).delete("/api/foods?foodId=2");
+
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(2);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[1].name).to.equal("Pizza con Pala");
+
+        });
         
     });
     describe("Custom Foods POST", () => {
@@ -238,6 +259,45 @@ describe("api/foods", () => {
             expect(res.status).to.equal(200);
             expect(res.body[1].name).to.equal("Milanesa");
             expect(res.body[1].userId).to.equal(1);
+
+        });
+        it("should create a custom food with a foodCategoryId", async () => {
+
+            //setup
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const aUser = await User.create(aUserData);
+            const testGenericFoodCategoryData = {name: "Fritos"};
+
+            await FoodCategory.create(testGenericFoodCategoryData); //tiene id 1
+
+
+            const testUserFood = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198, userId: 1, foodCategoryId: 1};
+
+            //Hago un POST
+            res = await request(app).post("/api/foods").send(testUserFood);
+
+            expect(res.status).to.equal(200);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[0].userId).to.equal(1);
+            expect(res.body[0].foodCategoryId).to.equal(1);
+
+        });
+        it("should create a custom food with a custom foodCategoryId", async () => {
+
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const aUserFoodCategoryData = {name: "Frituras del mediterraneo"};
+            const aUser = await User.create(aUserData);
+            aUser.addFoodCategory(await FoodCategory.create(aUserFoodCategoryData));
+
+            const testUserFood = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198, userId: 1, foodCategoryId: 1};
+
+            //Hago un POST
+            res = await request(app).post("/api/foods").send(testUserFood);
+
+            expect(res.status).to.equal(200);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[0].userId).to.equal(1);
+            expect(res.body[0].foodCategoryId).to.equal(1);
 
         });
         
@@ -278,6 +338,66 @@ describe("api/foods", () => {
             expect(res.body[1].userId).to.equal(2);
         });
         
+    });
+    describe("Custom Foods DELETE", () => {
+        it("should return my custom foods only", async () => {
+
+            //setup
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const anotherUserData = { name: "Gertrudis", surname: "Crespo", email: "gertrudis@gmail.com", password: "1234", birthday: new Date("Jan 8, 1987"), gender: "female", weight: 75, height: 1.75};
+
+            const aUser = await User.create(aUserData);
+            const anotherUser = await User.create(anotherUserData);
+            const testGenericFoodData = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198};
+
+            await Food.create(testGenericFoodData);
+
+            const aUserFoodData = {name: "Milanesa a la Romana", recommendedServing: 71, caloriesPerServing: 300};
+            const aUserAnotherFoodData = {name: "papa frita", recommendedServing: 71, caloriesPerServing: 300};
+            const anotherUserFoodData = {name: "Milanesa Napolitana Light", recommendedServing: 71, caloriesPerServing: 150};
+
+            aUser.addFood(await Food.create(aUserFoodData));
+            aUser.addFood(await Food.create(aUserAnotherFoodData));
+            anotherUser.addFood(await Food.create(anotherUserFoodData));
+
+            let res = await request(app).delete("/api/foods?foodId=3&userId=1");
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(2);
+            expect(res.body[0].name).to.equal("Milanesa");
+            expect(res.body[0].userId).to.equal(null);
+            expect(res.body[1].name).to.equal("Milanesa a la Romana");
+            expect(res.body[1].userId).to.equal(1);
+        });
+        
+    });
+    describe("Custom Foods PUT", () => {
+        it("should return my custom foods only", async () => {
+
+            //setup
+            const aUserData = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const anotherUserData = { name: "Gertrudis", surname: "Crespo", email: "gertrudis@gmail.com", password: "1234", birthday: new Date("Jan 8, 1987"), gender: "female", weight: 75, height: 1.75};
+
+            const aUser = await User.create(aUserData);
+            const anotherUser = await User.create(anotherUserData);
+            const testGenericFoodData = {name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198};
+
+            await Food.create(testGenericFoodData);
+
+            const aUserFoodData = {name: "Milanesa a la Romana", recommendedServing: 71, caloriesPerServing: 300};
+            const aUserAnotherFoodData = {name: "papa frita", recommendedServing: 71, caloriesPerServing: 300};
+            const anotherUserFoodData = {name: "Milanesa Napolitana Light", recommendedServing: 71, caloriesPerServing: 150};
+
+            aUser.addFood(await Food.create(aUserFoodData));
+            aUser.addFood(await Food.create(aUserAnotherFoodData));
+            anotherUser.addFood(await Food.create(anotherUserFoodData));
+
+            const foodUpdate = {name: "Papa Frita"}
+
+            let res = await request(app).put("/api/foods?foodId=3&userId=1").send(foodUpdate);
+            expect(res.status).to.equal(200);
+            expect(res.body.length).to.equal(3);
+            expect(res.body[2].name).to.equal("Papa Frita");
+        });
     });
     
 

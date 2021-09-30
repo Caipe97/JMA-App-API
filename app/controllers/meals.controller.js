@@ -259,7 +259,6 @@ exports.update = async (req, res) => {
         },
         include: Food
       });
-      //console.log(theMeal);
       if(!theMeal){
         res.status(400).send(
           {message: "Error finding meal"}
@@ -267,14 +266,12 @@ exports.update = async (req, res) => {
         return;
       }
     //Le updateo los parametros "simples" (que no requieren asociación)
-    console.log("ms1");
 
     req.query.userId = theMeal.userId;
 
     theMeal.name = name;
     theMeal.dateEaten = new Date(dateEaten);
     await theMeal.save();
-    console.log("ms2");
     if(req.body.FoodList){
       //Le destruyo las foods existentes y le agrego las que me pasaron 
       //await theMeal.setFoods([]);
@@ -317,6 +314,7 @@ exports.delete = (req, res) => {
         if (num == 1) {
           //Tengo que sendear todos los meals del user, si es que me pasaron el userId
           if(req.query.userId){
+            req.query.mealId = null;
             this.findMeals(req, res);
           }
           else{

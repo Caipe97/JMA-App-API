@@ -15,7 +15,6 @@ var deployType = 'test'; //si falla el leer deployType.txt, ese es el valor por 
 
 try{
   deployType = fs.readFileSync('./deployType.txt', 'utf8');
-  console.log("Data: ", deployType.toString());
   deployType = deployType.toString();
 }
 catch(e){

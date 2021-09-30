@@ -81,7 +81,7 @@ exports.findFoods = (req, res) => {
 
   }
   else {
-    //Si se pide un userId, se piden tambien los customFoods
+    //Si se pide un userId, se piden tambien los customFoods, sino, solo los genericos
     var condition = req.query.userId ? {[Op.or]: [
                                         { userId: null },
                                         { userId: req.query.userId }
@@ -103,17 +103,21 @@ exports.findFoods = (req, res) => {
 };
 
 // Update a Food by the id in the request
-exports.update = (req, res) => {
+exports.update = async (req, res) => {
     const foodId = req.query.foodId;
 
+
+    //Hago la magia
     Food.update(req.body, {
       where: { foodId: foodId }
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "Food was updated successfully."
-          });
+
+          //Quito el foodId para que el findFoods me encuentre todos los demas
+          req.query.foodId = null;
+
+          this.findFoods(req, res);
         } else {
           res.status(400).send({
             message: `Error updating Food with foodId=${foodId}. Maybe Food was not found or req.body is empty!`
@@ -138,9 +142,11 @@ exports.delete = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "Food deleted successfully"
-          })
+
+          req.query.foodId = null;
+
+          this.findFoods(req, res);
+
         } else {
           res.status(400).send({
             message: `Cannot delete Food with foodId=${foodId}. Maybe Food was not found!`

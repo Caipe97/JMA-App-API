@@ -110,9 +110,10 @@ exports.update = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "FoodCategory was updated successfully."
-          });
+            //elimino el foodCategoryId de la query para que encuentre todas luego
+            req.query.foodCategoryId = null;
+            this.findFoodCategories(req, res);
+
         } else {
           res.status(400).send({
             message: `Error updating FoodCategory with foodCategoryId=${foodCategoryId}. Maybe FoodCategory was not found or req.body is empty!`
@@ -137,9 +138,9 @@ exports.delete = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          res.send({
-            message: "FoodCategory deleted successfully"
-          })
+          //elimino el foodCategoryId de la query para que encuentre todas luego
+            req.query.foodCategoryId = null;
+            this.findFoodCategories(req, res);
         } else {
           res.status(400).send({
             message: `Cannot delete FoodCategory with foodCategoryId=${foodCategoryId}. Maybe FoodCategory was not found!`
