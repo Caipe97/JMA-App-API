@@ -66,14 +66,12 @@ db.foodCategories = require("./foodCategory.model.js")(sequelize, Sequelize);
 db.users.hasMany(db.meals, {foreignKey: "userId"});
 db.users.hasMany(db.foods, {foreignKey: "userId"});
 db.users.hasMany(db.foodCategories, {foreignKey: "userId"});
+db.foodCategories.hasMany(db.foods, {foreignKey: "foodCategoryId"});
+
 
 db.meals.belongsTo(db.users, {
   as: 'user',
   foreignKey: "userId"
-});
-
-db.foods.belongsTo(db.foodCategories, {
-  foreignKey: "foodCategoryId"
 });
 
 db.meals.belongsToMany(db.foods, {through: db.foodsMeals, foreignKey: "mealId"});

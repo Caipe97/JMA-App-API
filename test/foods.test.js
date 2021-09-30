@@ -77,7 +77,6 @@ describe("api/foods", () => {
             expect(res.body[0].name).to.equal("Milanesa");
             expect(res.body[1].name).to.equal("Pizza con Pala");
 
-
         });    
     });
 
