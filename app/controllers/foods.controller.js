@@ -14,8 +14,6 @@ exports.create = async (req, res) => {
     return;
   }
   
-
-  
   // Create a Food
   const food = {
     name: req.body.name,
@@ -25,7 +23,6 @@ exports.create = async (req, res) => {
 
   //Creo la Food en la bd
   let theFood = await Food.create(food);
-
 
   //Si viene con un userId, se trata de un custom food, hay que guardarlo como tal
   if(req.body.userId){

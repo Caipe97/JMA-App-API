@@ -183,6 +183,78 @@ describe("api/meals", () => {
 
             //expect(resGet.body.name).to.equal("Pizza con pala");
         });
+        it("should get meals by date, if discriminated ", async () => {
+
+            //setup
+            const aUserData =
+            { 
+                name: "Manuel",
+                surname: "Crespo",
+                email: "manu.crespo97@gmail.com",
+                password: "1234",
+                birthday: new Date("Jan 8, 1997"),
+                gender: "male",
+                weight: 75,
+                height: 1.75
+            };
+
+            const testMealsData = [
+                {
+                    name: "Meal1 no en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-05"
+                },
+                {
+                    name: "Meal1 en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-06"
+                },
+                {
+                    name: "Meal2 en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-07"
+                },
+                {
+                    name: "Meal3 en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-08"
+                },
+                {
+                    name: "Meal33 en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-09"
+                },
+                {
+                    name: "Meal34 en timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-10"
+                },
+                {
+                    name: "Meal4 NO timeframe",
+                    gramAmount: 150, //No me van a importar jamás
+                    dateEaten: "2014-09-11"
+                },
+            ];
+
+            const aUser = await User.create(aUserData);
+            const meals = await Meal.bulkCreate(testMealsData);
+
+            await aUser.addMeals(meals);
+
+            //Hacer el Get
+            let resGet = await request(app).get("/api/meals?userId=1&dateStart=2014-09-06&dateEnd=2014-09-10");
+
+            expect(resGet.status).to.equal(200);
+            let reply = resGet.body;
+            console.log(reply);
+            expect(reply.length).to.equal(5);
+            expect(reply[0].name).to.equal("Meal1 en timeframe");
+            expect(reply[1].name).to.equal("Meal2 en timeframe");
+            expect(reply[2].name).to.equal("Meal3 en timeframe");
+            expect(reply[3].name).to.equal("Meal33 en timeframe");
+            expect(reply[4].name).to.equal("Meal34 en timeframe");
+
+        });
     });
     describe("POST /", () => {
         it("should create a meal (empty food list) ", async () => {

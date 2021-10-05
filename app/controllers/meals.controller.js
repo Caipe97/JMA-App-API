@@ -158,20 +158,58 @@ catch(err){
   });
 
 }
-
-
 };
 
 // Retrieve all meals from an user
 
 exports.findMeals = (req, res) => {
 
+
   if (req.query.userId){
+    var condition = [{userId: req.query.userId}];
+
+    if(req.query.dateStart){
+      if (!isDateOk(req.query.dateStart)){
+        res.status(400).send({
+          message: "Bad dateStart"
+        })
+      }
+      if(req.query.dateEnd){
+        //Validar que funcione dateEnd
+        if (!isDateOk(req.query.dateEnd)){
+          res.status(400).send({
+            message: "Bad dateEnd"
+          })
+        }
+
+        //Ambos dateStart y dateEnd
+        condition.push({
+          dateEaten: {
+            [Op.and]: {
+              [Op.gte]: new Date(req.query.dateStart),
+              [Op.lte]: new Date(req.query.dateEnd)
+            }}
+        })
+      }
+      else{
+        //Sólo dateStart
+        condition.push({
+          dateEaten: {[Op.gte]: new Date(req.query.dateStart)}
+        });
+      }
+    }
+    else if(req.query.dateEnd){ 
+      //Sólo dateEnd
+      condition.push({
+        dateEaten: {[Op.lte]: new Date(req.query.dateEnd)}
+      })
+
+    }
     //Busco todos los meals segun un userId
     const userId = req.query.userId;
 
     Meal.findAll({ 
-      where: {userId: userId},
+      where: condition,
       include: Food
      })
       .then(data => {
