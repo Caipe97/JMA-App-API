@@ -121,7 +121,6 @@ describe("api/meals", () => {
 
             expect(resGet.status).to.equal(200);
 
-            //console.log(resGet);
 
             expect(resGet.body.name).to.equal("Pizza con pala");
         });
@@ -162,7 +161,6 @@ describe("api/meals", () => {
 
 
             const mealId = aMeal.mealId;
-            console.log(mealId);
             
 
             //Hacer el Get
@@ -179,9 +177,6 @@ describe("api/meals", () => {
             expect(reply.FoodList[2].quantity).to.equal(3);
             expect(reply.FoodList[2].food.name).to.equal("Huevo");
 
-            
-
-            //expect(resGet.body.name).to.equal("Pizza con pala");
         });
         it("should get meals by date, if discriminated ", async () => {
 
@@ -246,7 +241,6 @@ describe("api/meals", () => {
 
             expect(resGet.status).to.equal(200);
             let reply = resGet.body;
-            console.log(reply);
             expect(reply.length).to.equal(5);
             expect(reply[0].name).to.equal("Meal1 en timeframe");
             expect(reply[1].name).to.equal("Meal2 en timeframe");
