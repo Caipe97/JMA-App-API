@@ -44,7 +44,7 @@ function parseMealMultipleResponse(data){
               caloriesPerServing: food.caloriesPerServing,
               createdAt: food.createdAt,
               updatedAt: food.updatedAt,
-              foodCategoryId: food.FoodMeal.foodCategoryId
+              foodCategoryId: food.foodCategoryId
             }
           }
         )
@@ -90,7 +90,8 @@ function parseMealSingleResponse(data){
               recommendedServing: food.recommendedServing,
               caloriesPerServing: food.caloriesPerServing,
               createdAt: food.createdAt,
-              updatedAt: food.updatedAt
+              updatedAt: food.updatedAt,
+              foodCategoryId: food.foodCategoryId
             }
           }
         )
