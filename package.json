@@ -19,7 +19,6 @@
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.6.5",
     "sequelize-mock": "^0.10.2",
-    "sqlite3": "^5.0.2",
     "supertest": "^6.1.6"
   },
   "name": "proyintegral",
@@ -45,5 +44,8 @@
     "api"
   ],
   "author": "Manuel",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "sqlite3": "^5.0.2"
+  }
 }

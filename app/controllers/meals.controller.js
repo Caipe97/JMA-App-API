@@ -1,10 +1,11 @@
-const { foods } = require("../models");
+const { foods, foodCategories } = require("../models");
 const db = require("../models");
 const Meal = db.meals;
 const User = db.users;
 const Food = db.foods;
 //const FoodMeal = db.foodsMeals;
 const Op = db.Sequelize.Op;
+const FoodCategory = db.foodCategories;
 
 function isDateOk(dateString){
   if(isNaN(new Date(dateString))){
@@ -379,7 +380,58 @@ exports.delete = (req, res) => {
       });
 };
 
-exports.graphBarData = (req, res) => {
+exports.graphBarData = async (req, res) => {
+  console.log("Holaa");
+  if(!req.query.userId){
+    res.status(400).send({
+      message: "No userId provided"
+    })
+  }
+//Tengo que buscar los meals del usuario del ultimo año
+const theMeals = await Meal.findAll({ 
+  where: {
+    userId: req.query.userId,
+    dateEaten: {[Op.gte]: new Date(new Date().setMonth(new Date().getMonth()-11))}},
+  include: Food
+ });
+
+ //console.log(theMeals);
+
+ let graphBarReply = {
+   labels: [],
+   data: []
+ }
+ //Organizo en meses a las distintas Meals
+ for(let i= 0; i<=11; i++){
+  let dateToCheck = new Date();
+  dateToCheck.setMonth(dateToCheck.getMonth() - 11 + i);
+  //console.log("Current Year: " + dateToCheck.getFullYear() + " Month: " + dateToCheck.getMonth());
+
+  //Me creo el objeto que voy a pushear al array
+  graphBarReply.labels[i] = dateToCheck.toLocaleString('es-ES', { month: 'long' }) + " " + dateToCheck.getFullYear();
+  let calorieCount = 0;
+
+  //Busco en todas las meals cuales pertenecen a este mes
+  theMeals.forEach(meal => {
+    //Check si se esta en el mes correspondiente
+    //console.log("Meal Year: " + (meal.dataValues.dateEaten).getFullYear() + " Month: " + (meal.dataValues.dateEaten).getMonth());
+    if(((meal.dataValues.dateEaten).getMonth() == dateToCheck.getMonth()) && (meal.dataValues.dateEaten).getFullYear() == dateToCheck.getFullYear()){
+      //Agrego las calorias de todos los foods
+      //console.log("A match")
+      meal.dataValues.Food.forEach(food => {
+        //console.log("FoodName: " + food.dataValues.caloriesPerServing + " * " + food.dataValues.FoodMeal.dataValues.quantity);
+        //Sumo el contenido calorico de aquella comida
+        calorieCount += food.dataValues.caloriesPerServing * food.dataValues.FoodMeal.dataValues.quantity;
+      })
+    }
+    
+  });
+  graphBarReply.data[i] = calorieCount;
+
+ }
+ //console.log(graphBarReply);
+ res.send(graphBarReply);
+
 
 
 };
