@@ -9,9 +9,6 @@
     // Obtener foods
     router.get("/", foods.findFoods);
   
-    // Obtener una comida
-    //router.get("/", foods.findOne);
-  
     // Actualizar una comida por el id
     router.put("/", foods.update);
   
@@ -19,6 +16,5 @@
     router.delete("/", foods.delete);
   
     module.exports = router;
-    //app.use('/api/foods', router);
 
   
