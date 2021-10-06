@@ -13,7 +13,7 @@
     router.get("/", meals.findMeals);
   
     // Obtener un solo meal
-    //router.get("/byId", meals.findOne);
+    router.get("/graphBar", meals.graphBarData);
   
     // Actualizar un meal por el id
     router.put("/", meals.update);
@@ -23,5 +23,4 @@
 
 
     module.exports = router;
-    //app.use('/api/meals', router);
   

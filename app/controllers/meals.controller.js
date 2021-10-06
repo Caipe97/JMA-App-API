@@ -379,3 +379,7 @@ exports.delete = (req, res) => {
       });
 };
 
+exports.graphBarData = (req, res) => {
+
+
+};
