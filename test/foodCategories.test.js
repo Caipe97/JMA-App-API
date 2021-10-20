@@ -17,6 +17,10 @@ describe("api/foodCategories", () => {
     });
 
     describe("POST", () => {
+        it("should error if no name is provided", async () => {
+            let res = await request(app).post("/api/foodCategories").send({});
+            expect(res.status).to.equal(400);
+        });
         it("should create a generic foodCategory", async () => {
 
             //setup
