@@ -52,7 +52,6 @@ describe("api/foods", () => {
 
             //Hacer el Post
             let res = await request(app).post("/api/foods").send(testFood);
-            console.log(res.body);
 
             expect(res.status).to.equal(200);
             expect(res.body[0].foodCategoryId).to.equal(null);
@@ -96,7 +95,6 @@ describe("api/foods", () => {
             let res = await request(app).get("/api/foods?foodId=2");
 
             expect(res.status).to.equal(200);
-            console.log(res.body);
 
             expect(res.body.name).to.equal("Pizza con Pala");
         });
@@ -149,7 +147,6 @@ describe("api/foods", () => {
             ];
 
             await Food.bulkCreate(testFoods);
-            console.log("HEY HEEY");
             const testUpdate = {recommendedServing: 95};
 
             //Hacer el PUT
@@ -404,7 +401,6 @@ describe("api/foods", () => {
     after(function() { 
         console.log('All tests ran'); 
         //db.sequelize.close();
-        console.log(User);
     });
 
 

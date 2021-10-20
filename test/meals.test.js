@@ -13,7 +13,6 @@ describe("api/meals", () => {
     beforeEach( async ()=> {
         //Elimino todo de la base de datos.
        await db.sequelize.sync({ force: true }).then(() => {
-            //console.log("Drop and re-sync db.");
           });{ force: true }
     });
 
@@ -471,7 +470,7 @@ describe("api/meals", () => {
             let res = await request(app).post("/api/meals?userId=1").send(createdFood);
 
             expect(res.status).to.equal(200);
-            //un commentario
+
             const testUpdate = {
                 name: "Mas Pizza que Pala",
                 dateEaten: "2014-09-08",
@@ -504,7 +503,6 @@ describe("api/meals", () => {
              res = await request(app).put("/api/meals?mealId=1").send(testUpdate);
 
             expect(res.status).to.equal(200);
-            console.log("The res", res.body);
             expect(res.body[0].name).to.equal("Mas Pizza que Pala");
             expect(res.body[0].FoodList[0].quantity).to.equal(3);
             expect(res.body[0].FoodList[1].quantity).to.equal(1);
@@ -585,13 +583,74 @@ describe("api/meals", () => {
             expect(res.status).to.equal(200);
 
             //Me deberia traer los meals restantes
-            console.log(res.body);
             expect(res.body[0].name).to.equal("Mila con pure");
 
             
 
         });
-    })
+    });
+    describe("GET /graphBarData", () => {
+        it("should get all meals created by a user", async () => {
+            //COMPLETAR
+            //setup
+            const aUserData =
+                { 
+                    name: "Manuel",
+                    surname: "Crespo",
+                    email: "manu.crespo97@gmail.com",
+                    password: "1234",
+                    birthday: new Date("Jan 8, 1997"),
+                    gender: "male",
+                    weight: 75,
+                    height: 1.75
+                };
+            
+            await User.create(aUserData);
+
+            await Food.create({name: "Pizza", recommendedServing: 100, caloriesPerServing: 108});
+            await Food.create({name: "Pala", recommendedServing: 100, caloriesPerServing: 80});
+
+            
+            const frontEndRequest = {
+                name: "Pizza con Pala",
+                dateEaten: "2014-09-08",
+                FoodList: [
+                    {
+                        quantity: 1,
+                        food: {
+                            foodId: 1,
+                            name: "Pizza",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                    {
+                        quantity: 5,
+                        food: {
+                            foodId: 2,
+                            name: "Pala",
+                            recommendedServing: 108,
+                            caloriesPerServing: 150,
+                            createdAt: "2014-09-08",
+                            updatedAt: "2014-09-08"
+                        }
+                    },
+                ] 
+
+            }
+
+            //Hacer el POST
+            let res = await request(app).post("/api/meals?userId=1").send(frontEndRequest);
+
+            expect(res.status).to.equal(200);
+
+            let resGet = await request(app).get("/api/meals/graphBar?userId=1");
+
+            expect(resGet.status).to.equal(200);
+        });
+    });
 
 
 

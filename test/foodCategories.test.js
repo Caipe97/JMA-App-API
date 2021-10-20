@@ -43,7 +43,7 @@ describe("api/foodCategories", () => {
 
             expect(res.status).to.equal(400);
         });
-        describe("Custom Foods POST", () => {
+        describe("Custom Food Category POST", () => {
             it("should create a custom category based on a userId", async () => {
     
                 //setup
@@ -130,8 +130,12 @@ describe("api/foodCategories", () => {
             expect(res.body[1].userId).to.equal(2);
 
         });
+        
 
     });
+
+
+
     describe("PUT", () => {
         it("should update a  foodCategory", async () => {
             const testFoodCategory = {name:"Frituras"};

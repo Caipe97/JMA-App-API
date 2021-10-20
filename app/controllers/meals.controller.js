@@ -1,19 +1,12 @@
-const { foods, foodCategories } = require("../models");
+
 const db = require("../models");
 const Meal = db.meals;
 const User = db.users;
 const Food = db.foods;
+const FoodMeal = db.foodsMeals;
 //const FoodMeal = db.foodsMeals;
 const Op = db.Sequelize.Op;
-const FoodCategory = db.foodCategories;
-
-function isDateOk(dateString){
-  if(isNaN(new Date(dateString))){
-    return 0;
-  }
-  return 1;
-}
-
+var atoms = require('../atoms');
 
 function parseMealMultipleResponse(data){
 
@@ -116,7 +109,7 @@ exports.create = async (req, res) => {
     return;
   }
     //Check date format
-    if(!isDateOk(req.body.dateEaten)){
+    if(!atoms.isDateOk(req.body.dateEaten)){
       res.status(400).send({
         message: "Bad Date Format!"
       });
@@ -172,14 +165,14 @@ exports.findMeals = (req, res) => {
     var condition = [{userId: req.query.userId}];
 
     if(req.query.dateStart){
-      if (!isDateOk(req.query.dateStart)){
+      if (!atoms.isDateOk(req.query.dateStart)){
         res.status(400).send({
           message: "Bad dateStart"
         })
       }
       if(req.query.dateEnd){
         //Validar que funcione dateEnd
-        if (!isDateOk(req.query.dateEnd)){
+        if (!atoms.isDateOk(req.query.dateEnd)){
           res.status(400).send({
             message: "Bad dateEnd"
           })
@@ -287,7 +280,7 @@ exports.update = async (req, res) => {
     const name = req.body.name;
     const dateEaten = req.body.dateEaten; //En string
 
-    if (!isDateOk(dateEaten)){
+    if (!atoms.isDateOk(dateEaten)){
       res.status(400).send(
         {message: "Bad date format"}
       )
@@ -315,14 +308,11 @@ exports.update = async (req, res) => {
     await theMeal.save();
     if(req.body.FoodList){
       //Le destruyo las foods existentes y le agrego las que me pasaron 
-      //await theMeal.setFoods([]);
       await db.foodsMeals.destroy(
         {where: {mealId: mealId}}
       )
       await theMeal.reload();
-      console.log("ms4");
       for(const ingredient of req.body.FoodList){
-        console.log("ms5");
   
         let theFood = await Food.findByPk(ingredient.food.foodId);
         if(!theFood){
@@ -339,7 +329,7 @@ exports.update = async (req, res) => {
 };
 
 // Delete a Meal with the specified mealId in the request
-exports.delete = (req, res) => {
+exports.delete = async (req, res) => {
     //console.log(req);
     if(!req.query.mealId){
       res.status(400).send({
@@ -347,6 +337,11 @@ exports.delete = (req, res) => {
       });
     }
     const mealId = req.query.mealId;
+
+    //Elimino los foodsMeals correspondientes.
+    await FoodMeal.destroy({
+      where: {mealId: mealId}
+    });
 
     Meal.destroy({
       where: { mealId: mealId }
@@ -381,7 +376,6 @@ exports.delete = (req, res) => {
 };
 
 exports.graphBarData = async (req, res) => {
-  console.log("Holaa");
   if(!req.query.userId){
     res.status(400).send({
       message: "No userId provided"
@@ -395,8 +389,6 @@ const theMeals = await Meal.findAll({
   include: Food
  });
 
- //console.log(theMeals);
-
  let graphBarReply = {
    labels: [],
    data: []
@@ -405,7 +397,7 @@ const theMeals = await Meal.findAll({
  for(let i= 0; i<=11; i++){
   let dateToCheck = new Date();
   dateToCheck.setMonth(dateToCheck.getMonth() - 11 + i);
-  //console.log("Current Year: " + dateToCheck.getFullYear() + " Month: " + dateToCheck.getMonth());
+
 
   //Me creo el objeto que voy a pushear al array
   graphBarReply.labels[i] = dateToCheck.toLocaleString('es-ES', { month: 'long' }) + " " + dateToCheck.getFullYear();
@@ -414,12 +406,12 @@ const theMeals = await Meal.findAll({
   //Busco en todas las meals cuales pertenecen a este mes
   theMeals.forEach(meal => {
     //Check si se esta en el mes correspondiente
-    //console.log("Meal Year: " + (meal.dataValues.dateEaten).getFullYear() + " Month: " + (meal.dataValues.dateEaten).getMonth());
+
     if(((meal.dataValues.dateEaten).getMonth() == dateToCheck.getMonth()) && (meal.dataValues.dateEaten).getFullYear() == dateToCheck.getFullYear()){
       //Agrego las calorias de todos los foods
-      //console.log("A match")
+
       meal.dataValues.Food.forEach(food => {
-        //console.log("FoodName: " + food.dataValues.caloriesPerServing + " * " + food.dataValues.FoodMeal.dataValues.quantity);
+
         //Sumo el contenido calorico de aquella comida
         calorieCount += food.dataValues.caloriesPerServing * food.dataValues.FoodMeal.dataValues.quantity;
       })
@@ -429,9 +421,6 @@ const theMeals = await Meal.findAll({
   graphBarReply.data[i] = calorieCount;
 
  }
- //console.log(graphBarReply);
  res.send(graphBarReply);
-
-
 
 };

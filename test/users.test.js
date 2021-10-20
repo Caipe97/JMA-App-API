@@ -145,8 +145,7 @@ describe("api/users", () => {
             var resPost = await (request(app).post("/api/users/login").send(loginCreds).set('Accept', 'application/json'));
 
             //extraigo el id del user
-            const idUser = (resPost.body).userId;
-            //console.log("id del usuario" + idUser);             
+            const idUser = (resPost.body).userId;         
             resPost = await (request(app).put("/api/users?userId=" + idUser).send(updateCreds).set('Accept', 'application/json'));
             
             expect(resPost.status).to.equal(200);
@@ -257,8 +256,6 @@ describe("api/users", () => {
 
     after(function() { 
         console.log('All tests ran'); 
-        //db.sequelize.close();
-        console.log(User);
     });
 
 })

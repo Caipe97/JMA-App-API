@@ -21,8 +21,6 @@ catch(e){
   console.log('WARNING: ', e.stack);
 }
 
-
-
 var corsOptions = {
   origin: "http://localhost:8081"
 };
@@ -32,12 +30,12 @@ const dropDB = 0;
 switch (dropDB){
   case 1:
       db.sequelize.sync({ force: true }).then(() => {
-        console.log("Drop and re-sync db.");
+        console.log("Dropped and re-synced db.");
       });
   default:
 
       db.sequelize.sync().then(() => {
-        console.log("sync db.");
+        console.log("Synced db.");
       });
 }
 
@@ -60,12 +58,10 @@ app.use('/api/users', require('./app/routes/user.routes'));
 app.use('/api/foods', require('./app/routes/food.routes'));
 app.use('/api/meals', require('./app/routes/meal.routes'));
 app.use('/api/foodCategories', require('./app/routes/foodCategory.routes'));
+app.use('/api/goals', require('./app/routes/goal.routes'));
 
 module.exports = app;
 
-//require("./app/routes/user.routes")(app);
-//require("./app/routes/meal.routes")(app);
-//require("./app/routes/food.routes")(app);
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

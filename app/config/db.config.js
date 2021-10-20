@@ -18,13 +18,6 @@ var dialect;
 
 switch(deployType){
 
-  case "local":
-    host = "localhost";
-    user = "jmaadmin";
-    password = "hola1234";
-    db = "productionDB";
-    dialect = "postgres";
-    break;
 
   case "prod":
     host = "ec2-18-214-238-28.compute-1.amazonaws.com";
