@@ -63,7 +63,13 @@ function formatGetData(goals){
         var foodCalories = food.caloriesPerServing;
         //Tengo que contar la cantidad de calorias por cada comida del FoodCategory
         food.Meals.forEach(meal => {
-          objectiveData.currentCalories += (meal.FoodMeal.quantity * foodCalories);
+          let dateEnd = new Date(goal.dateStart);
+          
+          dateEnd.setMonth(dateEnd.getMonth()+1);
+          dateEnd.setDate(0);
+          if(meal.dateEaten >= goal.dateStart && meal.dateEaten <= dateEnd){
+            objectiveData.currentCalories += (meal.FoodMeal.quantity * foodCalories);
+          }
         })
       })
       goalData.objectives.push(objectiveData);
