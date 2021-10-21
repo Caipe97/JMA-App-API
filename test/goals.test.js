@@ -69,8 +69,6 @@ describe("api/goals", () => {
             const aFood = await Food.create({name: "Milanesa", recommendedServing: 85, caloriesPerServing: 198});
             const anotherFood = await Food.create({name: "Remolacha", recommendedServing: 85, caloriesPerServing: 100});
 
-            
-
             //associations
 
             await aUser.addGoal(aGoal);
@@ -205,6 +203,39 @@ describe("api/goals", () => {
             expect(reply[0].userId).to.equal(1);
             
         });
+        it("should give me the calorie count for all foods in a period, if I specify totalCalories", async () => {
+
+            //setup
+            const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const testGoal = {name: "Goal1", dateStart: "2021-09", totalCalories: 1000};
+
+            const aUser = await User.create(testUser);
+            const aGoal = await Goal.create(testGoal);
+
+            //Creo foods y dos meals
+            const aFood = await Food.create({name: "Milanesa", recommendedServing: 85, caloriesPerServing: 200});
+            const anotherFood = await Food.create({name: "Remolacha", recommendedServing: 85, caloriesPerServing: 100});
+            const aMeal = await Meal.create({name: "Milanesa con puré", dateEaten: "2021-09-08"}); //Notar que es en la fecha estipulada en el goal
+            const anotherMeal = await Meal.create({name: "Milanesa con puré", dateEaten: "2021-09-10"}); //Notar que es en la fecha estipulada en el goal
+            const mealOutsideRange = await Meal.create({name: "Milanesa con puré", dateEaten: "2021-10-2"}); //Fuera de la fecha estipulada en el goal
+            //associations
+
+            await aUser.addGoal(aGoal);
+            await aMeal.addFood(aFood, {through: {quantity: 1}});
+            await anotherMeal.addFood(anotherFood, {through: {quantity: 1}});
+            await mealOutsideRange.addFood(anotherFood, {through: {quantity: 1}});
+            await aUser.addMeals([aMeal, anotherMeal, mealOutsideRange]);
+            
+            //Hacer el Get
+            let resGet = await request(app).get("/api/goals?userId=1");
+
+            expect(resGet.status).to.equal(200);
+            let reply = resGet.body;
+            //console.log(reply[0].FoodCategories[0].Food);
+            expect(reply[0].totalCalories).to.equal(1000);
+            expect(reply[0].currentTotalCalories).to.equal(300);
+            
+        });
     });
     describe("POST /goals", () => {
         it("should post a goal using a general calorie count, and return my goal list", async () => {
@@ -279,6 +310,7 @@ describe("api/goals", () => {
             expect(reply.body.message).to.equal("Goal already exists for that Date.");
 
         });
+        
         it("should post a goal with objectives", async () => {
 
             //Setup
@@ -292,6 +324,40 @@ describe("api/goals", () => {
                 name: 'myGoal',
                 dateStart: '2021-07',
                 totalCalories: 5000,
+                objectives: 
+                [
+                    {
+                        objectiveCalories: 3000,
+                        foodCategoryId: 1
+                    },
+                    {
+                        objectiveCalories: 2000,
+                        foodCategoryId: 2
+                    },
+                ]
+            };
+            let reply = await request(app).post("/api/goals?userId=1").send(testGoalData);
+            expect(reply.status).to.equal(200);
+            expect(reply.body[0].objectives.length).to.equal(2);
+            expect(reply.body[0].objectives[0].objectiveCalories).to.equal(3000);
+            expect(reply.body[0].objectives[0].foodCategory.name).to.equal('Fruta');
+            expect(reply.body[0].objectives[1].objectiveCalories).to.equal(2000);
+            expect(reply.body[0].objectives[1].foodCategory.name).to.equal('Verdura');
+
+        });
+        it("should post a goal with ONLY objectives", async () => {
+
+            //Setup
+            const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            
+            await User.create(testUser);
+            await FoodCategory.create({name: "Fruta"});
+            await FoodCategory.create({name: "Verdura"});
+
+            const testGoalData = {
+                name: 'myGoal',
+                dateStart: '2021-07',
+                totalCalories: 0,
                 objectives: 
                 [
                     {

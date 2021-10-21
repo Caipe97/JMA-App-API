@@ -32,19 +32,38 @@ function isTotalCaloriesGreaterThanSumCalories(aGoal){
 }
 
 //Formateo de data de GET a enviar
-function formatGetData(goals){
+async function formatGetData(goals){
   var replyData = [];
   //Tengo que, para cada goal, utilizar sus objectives
-  goals.forEach(goal => {
+  for (let goal of goals){
     var goalData = 
     {
       name: goal.name,
       objectives: [],
       dateStart: goal.dateStart,
       totalCalories: goal.totalCalories,
+      currentTotalCalories: 0,
       userId: goal.userId,
       goalId: goal.goalId
     };
+    let dateEnd = new Date(goal.dateStart);   
+    dateEnd.setMonth(dateEnd.getMonth()+1);
+    dateEnd.setDate(0);
+    if(goal.totalCalories >0){
+      //Busco todos los meals del usuario, tiene que ser una busqueda distinta porque la original solo incluye Meals donde estén las FoodCategories, mientras que acá va todo.
+      let allMeals = await Meal.findAll({where: {userId: goal.userId, dateEaten:{[Op.between]: [goal.dateStart, dateEnd]}}, include: Food});
+      allMeals.forEach(meal => {
+        meal.Food.forEach(food => {
+          goalData.currentTotalCalories+= (food.caloriesPerServing*food.FoodMeal.quantity);
+        })
+      })
+      console.log(goalData.currentTotalCalories);
+    }
+    if(goal.totalCalories ==0){
+      //Busco todos los meals del usuario
+
+      console.log('calories:',goal.totalCalories);
+    }
     goal.FoodCategories.forEach(foodCategory => {
       var objectiveData = 
       {
@@ -63,10 +82,7 @@ function formatGetData(goals){
         var foodCalories = food.caloriesPerServing;
         //Tengo que contar la cantidad de calorias por cada comida del FoodCategory
         food.Meals.forEach(meal => {
-          let dateEnd = new Date(goal.dateStart);
           
-          dateEnd.setMonth(dateEnd.getMonth()+1);
-          dateEnd.setDate(0);
           if(meal.dateEaten >= goal.dateStart && meal.dateEaten <= dateEnd){
             objectiveData.currentCalories += (meal.FoodMeal.quantity * foodCalories);
           }
@@ -76,7 +92,7 @@ function formatGetData(goals){
 
     })
     replyData.push(goalData);
-  })
+  }
   return replyData;
 }
 
@@ -136,7 +152,7 @@ exports.create = async (req, res) => {
 };
 
 // Retrieve Goals from the database.
-exports.findGoals = (req, res) => {
+exports.findGoals = async (req, res) => {
   var condition;
   if(req.body.userId){ //Esto es por si me pinguean desde el post.
     req.query.userId = req.body.userId;
@@ -156,6 +172,21 @@ exports.findGoals = (req, res) => {
     }
 
     //Busco todos los goals
+    let theGoals = await Goal.findAll(
+      {
+        where: condition,
+        include: {model: FoodCategory, include: {model: Food, include: {model:Meal, where: {userId: req.query.userId}}}}
+      }
+    );
+    if(!theGoals){
+      res.status(500).send({
+        message:
+          err.message || "Error while retrieving goals."
+      });
+    }
+    sendData = await formatGetData(theGoals);
+    res.send(sendData);
+    /*
     Goal.findAll(
       {
         where: condition,
@@ -163,7 +194,8 @@ exports.findGoals = (req, res) => {
       })
       .then(data => {
         //Formateo de data a enviar
-        res.send(formatGetData(data));
+        data = await formatGetData(data)
+        res.send(data);
       })
       .catch(err => {
         res.status(500).send({
@@ -171,6 +203,7 @@ exports.findGoals = (req, res) => {
             err.message || "Error while retrieving goals."
         });
       });
+      */
 };
 
 // Update a Goal by the id in the request
