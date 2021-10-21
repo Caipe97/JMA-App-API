@@ -42,7 +42,8 @@ function formatGetData(goals){
       objectives: [],
       dateStart: goal.dateStart,
       totalCalories: goal.totalCalories,
-      userId: goal.userId
+      userId: goal.userId,
+      goalId: goal.goalId
     };
     goal.FoodCategories.forEach(foodCategory => {
       var objectiveData = 
