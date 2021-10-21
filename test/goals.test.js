@@ -127,6 +127,8 @@ describe("api/goals", () => {
 
             await pizzaPala.addFood(aFood, {through: {quantity: 2}});
             await pizzaPala.addFood(anotherFood, {through: {quantity: 3}});
+
+            await aUser.addMeal(pizzaPala);
             
 
             //Hacer el Get
@@ -184,7 +186,9 @@ describe("api/goals", () => {
             await pizzaPalaOct.addFood(aFood, {through: {quantity: 2}});
             await pizzaPalaOct.addFood(anotherFood, {through: {quantity: 3}});
             
-
+            await aUser.addMeal(pizzaPalaAug);
+            await aUser.addMeal(pizzaPalaSep);
+            await aUser.addMeal(pizzaPalaOct);
             //Hacer el Get
             let resGet = await request(app).get("/api/goals?userId=1");
 

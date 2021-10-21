@@ -159,7 +159,7 @@ exports.findGoals = (req, res) => {
     Goal.findAll(
       {
         where: condition,
-        include: {model: FoodCategory, include: {model: Food, include: Meal}}
+        include: {model: FoodCategory, include: {model: Food, include: {model:Meal, where: {userId: req.query.userId}}}}
       })
       .then(data => {
         //Formateo de data a enviar
