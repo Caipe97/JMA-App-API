@@ -45,8 +45,8 @@ describe("api/goals", () => {
             expect(resGet.status).to.equal(200);
             let reply = resGet.body;
             //console.log(reply);
-            expect(reply[0].name).to.equal("Goal1");
-            expect(reply[1].name).to.equal("Goal2");
+            expect(reply[0].name).to.equal("Goal2");
+            expect(reply[1].name).to.equal("Goal1");
             expect(reply[0].userId).to.equal(1);
             expect(reply[1].userId).to.equal(1);
 

@@ -172,12 +172,21 @@ exports.findGoals = async (req, res) => {
     }
 
     //Busco todos los goals
-    let theGoals = await Goal.findAll(
-      {
-        where: condition,
-        include: {model: FoodCategory, include: {model: Food, include: {model:Meal, where: {userId: req.query.userId}}}}
-      }
-    );
+    let theGoals;
+    try{
+      theGoals = await Goal.findAll(
+        {
+          order: [['dateStart', 'DESC']],
+          where: condition,
+          include: {model: FoodCategory, include: {model: Food, include: {model:Meal, where: {userId: req.query.userId}}}}
+        }
+      );
+
+    }
+    catch(e){
+      console.log(e);
+    }
+    
     if(!theGoals){
       res.status(500).send({
         message:
