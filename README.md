@@ -3,11 +3,14 @@
 
 
 # Setup instructions
+Clone repo
 
-1) Clone repo
-2) npm install
-3) To run  in production mode, use npm start
-   To run tests, use npm run test
+npm install
+
+To run  in production mode, use npm start
+   
+   
+To run tests, use npm run test
 
 
 Production Database runs in PostgreSQL, while Test Database runs in SQLite.
