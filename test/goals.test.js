@@ -436,7 +436,7 @@ describe("api/goals", () => {
         it("should be able to edit a future goal", async () => {
             //Setup
             const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
-            const testGoal = {name: "Goal1", dateStart: "2021-11"};
+            const testGoal = {name: "Goal1", dateStart: "2023-12"};
 
             const aUser = await User.create(testUser);
             const aGoal = await Goal.create(testGoal);
@@ -455,7 +455,7 @@ describe("api/goals", () => {
 
             const testGoalUpdate = {
                 name: 'myGoal',
-                dateStart: '2021-11',
+                dateStart: '2023-12',
                 totalCalories: 6001,
                 objectives: 
                 [
