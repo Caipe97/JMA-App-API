@@ -141,7 +141,6 @@ try{
     await aMeal.addFood(theFood, {through: {quantity: ingredient.quantity}});
   }
 
-  //El hack mas horrible de todos...
 
   this.findMeals(req, res);
 
