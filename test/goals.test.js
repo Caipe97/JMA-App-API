@@ -44,7 +44,6 @@ describe("api/goals", () => {
 
             expect(resGet.status).to.equal(200);
             let reply = resGet.body;
-            //console.log(reply);
             expect(reply[0].name).to.equal("Goal2");
             expect(reply[1].name).to.equal("Goal1");
             expect(reply[0].userId).to.equal(1);
@@ -84,7 +83,6 @@ describe("api/goals", () => {
 
             expect(resGet.status).to.equal(200);
             let reply = resGet.body;
-            //console.log(reply[0].FoodCategories[0].Food);
             expect(reply[0].name).to.equal("Goal1");
             expect(reply[0].objectives[0].foodCategoryId).to.equal(1);
             expect(reply[0].objectives[0].objectiveCalories).to.equal(4000);
@@ -144,6 +142,50 @@ describe("api/goals", () => {
             expect(reply[0].objectives[1].currentCalories).to.equal(300);
             expect(reply[0].userId).to.equal(1);
             
+        });
+        it("should delete all goals with only one foodCategory that was deleted.", async () => {
+
+            //setup
+            const testUser = { name: "Manuel", surname: "Crespo", email: "manu.crespo97@gmail.com", password: "1234", birthday: new Date("Jan 8, 1997"), gender: "male", weight: 75, height: 1.75};
+            const testGoal = {name: "Goal1", dateStart: "2021-09"};
+            const testAnotherGoal = {name: "Goal2", dateStart: "2021-09"};
+
+            const aUser = await User.create(testUser);
+            const aGoal = await Goal.create(testGoal);
+            const anotherGoal = await Goal.create(testAnotherGoal);
+
+            //Creo un foodCategory, voy a eliminar aFoodCategory
+            const aFoodCategory = await FoodCategory.create({name: "myFoodCategory"});
+            const anotherFoodCategory = await FoodCategory.create({name: "myOtherFoodCategory"});
+
+
+            //associations
+
+            await aUser.addGoal(aGoal);
+            await aUser.addGoal(anotherGoal);
+
+            await aGoal.addFoodCategory(aFoodCategory, {through: {objectiveCalories: 4000}});
+
+            await anotherGoal.addFoodCategory(anotherFoodCategory, {through: {objectiveCalories: 2000}});
+            await anotherGoal.addFoodCategory(anotherFoodCategory, {through: {objectiveCalories: 2000}});
+            
+            
+            console.log(aGoal);
+            //Hacer el Get
+            let resGet = await request(app).get("/api/goals?userId=1");
+
+            expect(resGet.status).to.equal(200);
+            //New
+            expect(resGet.body[0].name).to.equal("Goal1");
+
+            //Eliminar la foodCategory
+            let res = await request(app).delete("/api/foodCategories?foodCategoryId=1&userId=1");
+            expect(res.status).to.equal(200);
+
+            //Chequear inexistencia de goal con sólo la foodCategory recien eliminada
+            resGet = await request(app).get("/api/goals?userId=1");
+            expect(resGet.status).to.equal(200);
+            console.log(resGet.body);
         });
         it("should ONLY list meals in the goal period", async () => {
 
@@ -231,7 +273,6 @@ describe("api/goals", () => {
 
             expect(resGet.status).to.equal(200);
             let reply = resGet.body;
-            //console.log(reply[0].FoodCategories[0].Food);
             expect(reply[0].totalCalories).to.equal(1000);
             expect(reply[0].currentTotalCalories).to.equal(300);
             

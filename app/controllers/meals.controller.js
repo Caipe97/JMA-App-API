@@ -214,7 +214,6 @@ exports.findMeals = (req, res) => {
           )
           return;
         }
-
         //Happy path
         let response = parseMealMultipleResponse(data);
 
@@ -246,8 +245,6 @@ exports.findMeals = (req, res) => {
               return;
             }
             //Happy path
-            //console.log("Data from query:");
-            //console.log(data);
             let response = parseMealSingleResponse(data);            
             
             res.send(response);

@@ -1,6 +1,8 @@
+const { meals } = require("../models");
 const db = require("../models");
 const Food = db.foods;
 const User = db.users;
+const Meal = db.meals;
 const FoodCategory = db.foodCategories;
 const Op = db.Sequelize.Op;
 
@@ -133,12 +135,31 @@ exports.delete = (req, res) => {
     const foodId = req.query.foodId;
 
     console.log("ID: "+foodId);
-
+    
     Food.destroy({
       where: { foodId: foodId }
     })
       .then(num => {
         if (num == 1) {
+
+          console.log("deleted");
+          let mealsToDelete = [];
+          //Delete all empty meals (or meals that only had the now deleted food).
+          Meal.findAll({
+            include: Food
+          }).then(emptyMeals => {
+            console.log(emptyMeals);
+            emptyMeals.forEach(meal => {
+              if(meal.Food.length == 0){
+                mealsToDelete.push(meal.mealId);
+              }
+            });
+            console.log(mealsToDelete);
+            mealsToDelete.forEach(meal => {
+              Meal.destroy({where: {mealId: meal}})
+            })
+          })
+          
 
           req.query.foodId = null;
 

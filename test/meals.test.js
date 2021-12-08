@@ -120,7 +120,6 @@ describe("api/meals", () => {
 
             expect(resGet.status).to.equal(200);
 
-
             expect(resGet.body.name).to.equal("Pizza con pala");
         });
         it("should get a meal with its foods included ", async () => {
@@ -246,6 +245,71 @@ describe("api/meals", () => {
             expect(reply[2].name).to.equal("Meal3 en timeframe");
             expect(reply[3].name).to.equal("Meal33 en timeframe");
             expect(reply[4].name).to.equal("Meal34 en timeframe");
+
+        });
+        it("should have a meal deleted if it has only one food, and it's deleted ", async () => {
+
+            //setup
+            const aUserData =
+            { 
+                name: "Manuel",
+                surname: "Crespo",
+                email: "manu.crespo97@gmail.com",
+                password: "1234",
+                birthday: new Date("Jan 8, 1997"),
+                gender: "male",
+                weight: 75,
+                height: 1.75
+            };
+
+            const testMealData = 
+            {
+                name: "Té de Matcha",
+                dateEaten: "2014-09-08"
+            };
+
+            const aUser = await User.create(aUserData);
+            const aMeal = await Meal.create(testMealData);
+            const anotherMeal = await Meal.create(testMealData);
+
+            const matcha = await Food.create({name: "Matcha", recommendedServing: 100, caloriesPerServing: 108});
+            const fideos = await Food.create({name: "Fideos", recommendedServing: 100, caloriesPerServing: 108});
+
+            await aUser.addFood(matcha);
+
+            //Agregar las foods a la meal
+            await aMeal.addFood(matcha, {through: {quantity: 3}});
+            await anotherMeal.addFood(matcha, {through: {quantity: 3}});
+            await anotherMeal.addFood(fideos, {through: {quantity: 3}});
+
+            await aUser.addMeal(aMeal);
+            await aUser.addMeal(anotherMeal);
+             
+            
+
+            const mealId = aMeal.mealId;
+            const anotherMealId = anotherMeal.mealId;
+            
+
+
+            //Hacer el Get
+            let resGet = await request(app).get("/api/meals?mealId=" + mealId);
+
+            expect(resGet.status).to.equal(200);
+            expect(resGet.body.mealId).to.equal(1);
+           
+            //Elimino la customFood
+            let res = await request(app).delete("/api/foods?foodId=1&userId=1");
+            expect(res.status).to.equal(200);
+
+            //Verifico la inexistencia de la meal con sólo el food eliminado
+            resGet = await request(app).get("/api/meals?mealId=" + mealId);
+            expect(resGet.status).to.equal(400);
+
+            //Verifico la existencia de la meal con no sólo el food eliminado
+            resGet = await request(app).get("/api/meals?mealId=" + anotherMealId);
+            expect(resGet.status).to.equal(200);
+
 
         });
     });

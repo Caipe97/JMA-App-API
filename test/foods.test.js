@@ -399,7 +399,6 @@ describe("api/foods", () => {
     
 
     after(function() { 
-        console.log('All tests ran'); 
         //db.sequelize.close();
     });
 

@@ -1,5 +1,6 @@
 const db = require("../models");
 const FoodCategory = db.foodCategories;
+const Goal = db.goals;
 const User = db.users;
 const Op = db.Sequelize.Op;
 
@@ -24,7 +25,6 @@ exports.create = async (req, res) => {
     let aUser;
     try{
       aUser = await User.findByPk(req.body.userId);
-      //console.log(aUser);
     }
     catch(err){
       console.log(err);
@@ -138,9 +138,35 @@ exports.delete = (req, res) => {
     })
       .then(num => {
         if (num == 1) {
-          //elimino el foodCategoryId de la query para que encuentre todas luego
+          //Elimino los goals que hayan quedado sólo con la FoodCategory que se acaba de eliminar (ojo sólo los goals que tengan totalCalories en 0)
+          let goalsToDelete = [];
+          //Delete all empty meals (or meals that only had the now deleted food).
+          Goal.findAll({
+            where: { [Op.or]: [
+              {totalCalories: 0},
+              {totalCalories: null}
+            ] },
+            include: FoodCategory
+          }).then(allGoals => {
+            
+            allGoals.forEach(goal => {
+              if(goal.FoodCategories.length == 0){
+                goalsToDelete.push(goal.goalId);
+              }
+            });
+            goalsToDelete.forEach(goal => {
+              Goal.destroy({where: {goalId: goal}})
+            })
+            
+          }).then(hola =>{
             req.query.foodCategoryId = null;
             this.findFoodCategories(req, res);
+          })
+
+
+
+          //elimino el foodCategoryId de la query para que encuentre todas luego
+            
         } else {
           res.status(400).send({
             message: `Cannot delete FoodCategory with foodCategoryId=${foodCategoryId}. Maybe FoodCategory was not found!`
